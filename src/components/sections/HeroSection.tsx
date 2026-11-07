@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
+import { Heart, Sparkles } from 'lucide-react';
 import { GoldDivider } from '../ornaments/GoldDivider';
 import type { WeddingContent, Language } from '../../types/wedding';
 import { resolvePhoto } from '../../utils/image';
@@ -14,7 +14,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ content, currentLang }
   const heroImage = resolvePhoto(content.photos.heroCouple, content.photos.heroCoupleDummy);
 
   return (
-    <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-24 pb-16 px-4 sm:px-8 text-center">
+    <section className="relative min-h-[92vh] flex flex-col items-center justify-center pt-24 pb-16 px-4 sm:px-8 text-center">
       <motion.div
         className="max-w-4xl mx-auto flex flex-col items-center z-10 w-full"
         initial={{ opacity: 0, y: 25 }}
@@ -45,31 +45,40 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ content, currentLang }
           </div>
         </div>
 
-        {/* Featured Engagement Couple Portrait (with fallback to dummy) */}
+        {/* Featured Engagement Couple Portrait (Made significantly bigger & grander) */}
         <motion.div
-          className="my-8 relative group"
+          className="my-10 relative group"
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.8 }}
         >
-          <div className="relative w-44 h-56 sm:w-56 sm:h-72 rounded-t-[100px] rounded-b-2xl overflow-hidden p-1 bg-gradient-to-b from-gold-300 via-gold-400/50 to-gold-300 shadow-luxury-card">
-            <div className="w-full h-full rounded-t-[96px] rounded-b-xl overflow-hidden relative">
+          {/* Outer Royal Gold Glow */}
+          <div className="absolute -inset-4 bg-gradient-to-b from-amber-300/20 via-gold-400/20 to-transparent rounded-t-[200px] rounded-b-[40px] blur-xl opacity-70 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+          {/* Arched Luxury Gold Frame */}
+          <div className="relative w-72 h-[380px] sm:w-[350px] sm:h-[470px] md:w-[410px] md:h-[540px] rounded-t-[190px] rounded-b-3xl overflow-hidden p-2 bg-gradient-to-b from-[#FFE89E] via-[#D4AF37] to-[#8C6D18] shadow-2xl">
+            <div className="w-full h-full rounded-t-[180px] rounded-b-2xl overflow-hidden relative bg-[#F7F2EA]">
               <img
                 src={heroImage}
                 alt="Akarsh & Manasa"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
+              {/* Subtle Warm Inset Vignette */}
               <div className="absolute inset-0 bg-gradient-to-t from-maroon-950/60 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity" />
             </div>
           </div>
-          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white/95 border border-gold-400/60 shadow-sm text-[10px] font-sans font-semibold uppercase tracking-wider text-maroon-900 flex items-center gap-1.5">
-            <Heart size={10} className="text-gold-600 fill-gold-600" />
-            <span>Forever</span>
+
+          {/* Prominent "Forever & Always" Badge */}
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white/95 border border-gold-400/80 shadow-lg text-xs font-sans font-bold uppercase tracking-wider text-maroon-950 flex items-center gap-2 backdrop-blur-md">
+            <Sparkles size={12} className="text-gold-600 animate-spin-slow" />
+            <Heart size={13} className="text-rose-600 fill-rose-600" />
+            <span>Forever & Always</span>
+            <Sparkles size={12} className="text-gold-600 animate-spin-slow" />
           </div>
         </motion.div>
 
         {/* Lead Phrase: Together with their families */}
-        <div className="font-serif italic text-base sm:text-xl text-maroon-800/90 mb-5">
+        <div className="font-serif italic text-base sm:text-xl text-maroon-800/90 mb-5 mt-4">
           {content.hosts.invitationLead}
         </div>
 
