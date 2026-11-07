@@ -44,7 +44,7 @@ export const CurtainEntrance: React.FC<CurtainEntranceProps> = ({
               transition: { duration: 1.3, ease: [0.76, 0, 0.24, 1] },
             }}
           >
-            {/* Royal Gold Jacquard / Damask Micro-Pattern */}
+            {/* Royal Gold Jacquard Micro-Pattern */}
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#D4AF37_1.2px,transparent_1.2px)] [background-size:28px_28px] pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/30 pointer-events-none" />
 
@@ -52,7 +52,7 @@ export const CurtainEntrance: React.FC<CurtainEntranceProps> = ({
             <div className="absolute inset-3 sm:inset-6 border border-gold-400/40 rounded-l-2xl border-r-0 pointer-events-none" />
             <div className="absolute inset-5 sm:inset-9 border border-gold-400/25 rounded-l-xl border-r-0 pointer-events-none" />
 
-            {/* Left Top Gold Corner Flourish */}
+            {/* Left Corner Flourishes */}
             <div className="absolute top-8 left-8 sm:top-12 sm:left-12 w-8 h-8 border-t-2 border-l-2 border-gold-400/80 pointer-events-none" />
             <div className="absolute bottom-8 left-8 sm:bottom-12 sm:left-12 w-8 h-8 border-b-2 border-l-2 border-gold-400/80 pointer-events-none" />
 
@@ -66,8 +66,8 @@ export const CurtainEntrance: React.FC<CurtainEntranceProps> = ({
               </div>
             </div>
 
-            {/* Center Content: Left half of royal insignia watermark */}
-            <div className="relative z-10 my-auto text-right pr-6 sm:pr-12 opacity-25 hidden sm:block pointer-events-none">
+            {/* Center Content: Left half of royal watermark */}
+            <div className="relative z-10 my-auto text-right pr-6 sm:pr-12 opacity-20 hidden sm:block pointer-events-none">
               <div className="font-serif text-8xl font-black text-gold-400 tracking-tighter">
                 A
               </div>
@@ -107,7 +107,7 @@ export const CurtainEntrance: React.FC<CurtainEntranceProps> = ({
             <div className="absolute inset-3 sm:inset-6 border border-gold-400/40 rounded-r-2xl border-l-0 pointer-events-none" />
             <div className="absolute inset-5 sm:inset-9 border border-gold-400/25 rounded-r-xl border-l-0 pointer-events-none" />
 
-            {/* Right Top Gold Corner Flourish */}
+            {/* Right Corner Flourishes */}
             <div className="absolute top-8 right-8 sm:top-12 sm:right-12 w-8 h-8 border-t-2 border-r-2 border-gold-400/80 pointer-events-none" />
             <div className="absolute bottom-8 right-8 sm:bottom-12 sm:right-12 w-8 h-8 border-b-2 border-r-2 border-gold-400/80 pointer-events-none" />
 
@@ -121,8 +121,8 @@ export const CurtainEntrance: React.FC<CurtainEntranceProps> = ({
               </div>
             </div>
 
-            {/* Center Content: Right half of royal insignia watermark */}
-            <div className="relative z-10 my-auto text-left pl-6 sm:pl-12 opacity-25 hidden sm:block pointer-events-none">
+            {/* Center Content: Right half of royal watermark */}
+            <div className="relative z-10 my-auto text-left pl-6 sm:pl-12 opacity-20 hidden sm:block pointer-events-none">
               <div className="font-serif text-8xl font-black text-gold-400 tracking-tighter">
                 M
               </div>
@@ -143,53 +143,38 @@ export const CurtainEntrance: React.FC<CurtainEntranceProps> = ({
           </motion.div>
 
           {/* ============================================================ */}
-          {/* 3. CENTER EMBOSSED ROYAL WAX SEAL & MEDALLION                */}
+          {/* 3. CENTER BUTTON "Open Invitation" (DEAD CENTER)             */}
           {/* ============================================================ */}
           <motion.div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center justify-center pointer-events-auto"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{
-              scale: 0.6,
+              scale: 0.8,
               opacity: 0,
-              transition: { duration: 0.5, ease: 'easeIn' },
+              transition: { duration: 0.4, ease: 'easeIn' },
             }}
-            whileHover={{ scale: 1.05 }}
           >
-            {/* Glowing Golden Aura behind the seal */}
-            <div className="absolute w-52 h-52 sm:w-64 sm:h-64 rounded-full bg-amber-400/25 blur-2xl animate-pulse" />
+            {/* Glowing Golden Aura */}
+            <div className="absolute w-72 h-36 rounded-full bg-amber-400/25 blur-3xl animate-pulse pointer-events-none" />
 
-            {/* Outer Fluted Gold Ring */}
-            <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-full p-1.5 bg-gradient-to-tr from-[#8C6D18] via-[#FFE89E] to-[#C59B27] shadow-[0_15px_45px_rgba(0,0,0,0.8)] border border-[#FFF9C4]">
-              {/* Inner Royal Deep Maroon Disc */}
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-[#4A0E17] via-[#2A0505] to-[#5A1818] p-3 flex flex-col items-center justify-center border-2 border-gold-300/70 shadow-inner text-center">
-                <span className="text-[10px] uppercase tracking-[0.25em] text-gold-300 font-sans font-semibold">
-                  WEDDING
-                </span>
-
-                <div className="my-0.5 font-cinzel text-2xl sm:text-3xl font-extrabold text-[#FFE89E] tracking-widest drop-shadow-md">
-                  A <span className="text-gold-400 font-light">&</span> M
-                </div>
-
-                <div className="w-8 h-[1px] bg-gradient-to-r from-transparent via-gold-400 to-transparent my-1" />
-
-                <span className="text-[9px] uppercase tracking-wider text-gold-200/90 font-serif">
-                  Akarsh & Manasa
-                </span>
-              </div>
-            </div>
-
-            {/* Interactive Royal Button */}
-            <motion.div
-              className="mt-6 px-7 py-3 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#FFE89E] to-[#C59B27] text-maroon-950 font-bold text-xs sm:text-sm tracking-wider uppercase shadow-[0_8px_25px_rgba(212,175,55,0.4)] border border-[#FFF9C4] flex items-center gap-2 group hover:brightness-110 transition-all cursor-pointer"
-              whileTap={{ scale: 0.95 }}
+            {/* Perfectly Centered "Open Invitation" Button */}
+            <motion.button
+              type="button"
+              onClick={handleOpenClick}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.96 }}
+              className="relative px-8 sm:px-12 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#FFE89E] to-[#C59B27] text-maroon-950 font-cinzel font-bold text-sm sm:text-base tracking-[0.2em] uppercase shadow-[0_12px_40px_rgba(0,0,0,0.6),0_0_25px_rgba(212,175,55,0.45)] border-2 border-[#FFF9C4] flex items-center gap-3 cursor-pointer group hover:brightness-110 transition-all"
             >
-              <Sparkles size={16} className="text-maroon-900 animate-spin-slow" />
-              <span>{currentLang === 'en' ? 'Open Royal Invitation' : 'ಆಮಂತ್ರಣ ಪತ್ರಿಕೆಯನ್ನು ತೆರೆಯಿರಿ'}</span>
-            </motion.div>
+              <Sparkles size={18} className="text-maroon-900 animate-spin-slow shrink-0" />
+              <span className="whitespace-nowrap font-bold drop-shadow-sm">
+                {currentLang === 'en' ? 'Open Invitation' : 'ಆಮಂತ್ರಣ ಪತ್ರಿಕೆ'}
+              </span>
+              <Sparkles size={18} className="text-maroon-900 animate-spin-slow shrink-0" />
+            </motion.button>
 
-            <div className="mt-3 text-[11px] text-gold-200/80 font-sans tracking-wide">
-              {currentLang === 'en' ? 'Click anywhere to open the card' : 'ತೆರೆಯಲು ಎಲ್ಲಿಯಾದರೂ ಸ್ಪರ್ಶಿಸಿ'}
+            <div className="mt-4 text-xs text-gold-200/90 font-sans tracking-widest uppercase font-medium">
+              {currentLang === 'en' ? 'Tap anywhere to open' : 'ತೆರೆಯಲು ಎಲ್ಲಿಯಾದರೂ ಸ್ಪರ್ಶಿಸಿ'}
             </div>
           </motion.div>
         </motion.div>
