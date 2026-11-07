@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-maroon: 90 24 24;
+    --color-gold: 197 155 39;
+    --color-ivory: 253 251 247;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #FDFBF7;
+    color: #5A1818;
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Kannada', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F9F5EE;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #C59B27;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #5A1818;
+  }
+}
+
+/* Paper grain texture simulation */
+.paper-texture {
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(255, 232, 158, 0.25) 0%, transparent 60%),
+    radial-gradient(circle at 10% 80%, rgba(216, 75, 126, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 90% 40%, rgba(45, 90, 39, 0.04) 0%, transparent 40%);
+}
+
+.gold-shimmer-text {
+  background: linear-gradient(135deg, #7A2222 0%, #C59B27 40%, #FFE89E 60%, #C59B27 80%, #5A1818 100%);
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+.gold-metallic-text {
+  background: linear-gradient(135deg, #B8860B 0%, #E8C86A 35%, #D4AF37 70%, #996515 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-border-ornate {
+  border: 1.5px solid #C59B27;
+  outline: 1px solid rgba(197, 155, 39, 0.4);
+  outline-offset: 4px;
+}
+
+.gold-corner-frame {
+  position: relative;
+}
+
+.gold-corner-frame::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid #C59B27;
+  border-left: 2px solid #C59B27;
+}
+
+.gold-corner-frame::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  border-bottom: 2px solid #C59B27;
+  border-right: 2px solid #C59B27;
+}
+
+/* Glassmorphism for Royal South Indian cards */
+.royal-glass-card {
+  background: rgba(255, 253, 248, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(197, 155, 39, 0.35);
+  box-shadow: 0 16px 36px -8px rgba(90, 24, 24, 0.08), 0 0 20px 0 rgba(197, 155, 39, 0.12);
+}
+
+.royal-glass-card-elevated {
+  background: rgba(255, 255, 253, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(197, 155, 39, 0.5);
+  box-shadow: 0 24px 48px -12px rgba(90, 24, 24, 0.16), 0 0 28px 2px rgba(197, 155, 39, 0.22);
+}
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
