@@ -45,35 +45,35 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ content, currentLang }
           </div>
         </div>
 
-        {/* Featured Engagement Couple Portrait (Made significantly bigger & grander) */}
+        {/* Featured Engagement Couple Portrait (Bigger, Majestic & 100% Fluid Mobile Responsive) */}
         <motion.div
-          className="my-10 relative group"
+          className="my-10 relative group w-full flex justify-center"
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.8 }}
         >
           {/* Outer Royal Gold Glow */}
-          <div className="absolute -inset-4 bg-gradient-to-b from-amber-300/20 via-gold-400/20 to-transparent rounded-t-[200px] rounded-b-[40px] blur-xl opacity-70 group-hover:opacity-100 transition-opacity pointer-events-none" />
+          <div className="absolute -inset-4 max-w-[360px] sm:max-w-[440px] md:max-w-[500px] bg-gradient-to-b from-amber-300/25 via-gold-400/20 to-transparent rounded-t-[220px] rounded-b-[40px] blur-2xl opacity-75 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
           {/* Arched Luxury Gold Frame */}
-          <div className="relative w-72 h-[380px] sm:w-[350px] sm:h-[470px] md:w-[410px] md:h-[540px] rounded-t-[190px] rounded-b-3xl overflow-hidden p-2 bg-gradient-to-b from-[#FFE89E] via-[#D4AF37] to-[#8C6D18] shadow-2xl">
-            <div className="w-full h-full rounded-t-[180px] rounded-b-2xl overflow-hidden relative bg-[#F7F2EA]">
+          <div className="relative w-full max-w-[340px] sm:max-w-[420px] md:max-w-[480px] aspect-[3/4.2] rounded-t-[170px] sm:rounded-t-[210px] md:rounded-t-[240px] rounded-b-3xl overflow-hidden p-2 sm:p-2.5 bg-gradient-to-b from-[#FFE89E] via-[#D4AF37] to-[#8C6D18] shadow-[0_25px_60px_rgba(74,21,21,0.22)]">
+            <div className="w-full h-full rounded-t-[162px] sm:rounded-t-[202px] md:rounded-t-[232px] rounded-b-2xl overflow-hidden relative bg-[#F7F2EA]">
               <img
                 src={heroImage}
                 alt="Akarsh & Manasa"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
               {/* Subtle Warm Inset Vignette */}
-              <div className="absolute inset-0 bg-gradient-to-t from-maroon-950/60 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-t from-maroon-950/60 via-transparent to-transparent opacity-35 group-hover:opacity-15 transition-opacity" />
             </div>
           </div>
 
           {/* Prominent "Forever & Always" Badge */}
-          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2 rounded-full bg-white/95 border border-gold-400/80 shadow-lg text-xs font-sans font-bold uppercase tracking-wider text-maroon-950 flex items-center gap-2 backdrop-blur-md">
-            <Sparkles size={12} className="text-gold-600 animate-spin-slow" />
-            <Heart size={13} className="text-rose-600 fill-rose-600" />
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-6 py-2.5 rounded-full bg-white/95 border border-gold-400/90 shadow-xl text-xs sm:text-sm font-sans font-bold uppercase tracking-wider text-maroon-950 flex items-center gap-2 backdrop-blur-md whitespace-nowrap">
+            <Sparkles size={14} className="text-gold-600 animate-spin-slow shrink-0" />
+            <Heart size={14} className="text-rose-600 fill-rose-600 shrink-0" />
             <span>Forever & Always</span>
-            <Sparkles size={12} className="text-gold-600 animate-spin-slow" />
+            <Sparkles size={14} className="text-gold-600 animate-spin-slow shrink-0" />
           </div>
         </motion.div>
 
