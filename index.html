@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Page Title & Basic Meta -->
-    <title>Akarsh & Manasa | Wedding Invitation | ಶುಭ ವಿವಾಹ ಆಮಂತ್ರಣ ಪತ್ರಿಕೆ</title>
-    <meta name="title" content="Akarsh & Manasa | Wedding Invitation" />
-    <meta name="description" content="We cordially invite you to celebrate the auspicious wedding of Akarsh K.R. & Manasa R. on 12th & 13th December 2026, Bengaluru." />
+    <title>Akarsh & Manasa · Wedding Invitation · ಶುಭ ವಿವಾಹ</title>
+    <meta name="title" content="Akarsh & Manasa — A Wedding Invitation" />
+    <meta name="description" content="With the blessings of Sri Mahaganapathi, Akarsh K.R. & Manasa R. invite you to their wedding on 12 & 13 December 2026 in Bengaluru. Open the invitation to view details." />
     <meta name="author" content="Akarsh & Manasa" />
     <meta name="theme-color" content="#FAF8F5" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%234A1515' stroke='%23D4AF37' stroke-width='4'/><path d='M50 20 C42 35 32 45 50 78 C68 45 58 35 50 20 Z' fill='%23D4AF37'/><circle cx='50' cy='48' r='7' fill='%23FAF8F5'/></svg>" />
 
     <!-- Open Graph (WhatsApp, Facebook, LinkedIn, iMessage) -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Akarsh & Manasa Wedding Invitation" />
-    <meta property="og:title" content="Akarsh & Manasa | Wedding Invitation 💍" />
-    <meta property="og:description" content="Together with their families, cordially invite you to celebrate the marriage of Akarsh K.R. & Manasa R. on 12th & 13th December 2026, Bengaluru." />
+    <meta property="og:site_name" content="Akarsh & Manasa" />
+    <meta property="og:title" content="Akarsh & Manasa — Wedding Invitation" />
+    <meta property="og:description" content="Together with their families, they cordially invite you to grace their wedding and bless their new beginning — 12 & 13 December 2026, Bengaluru." />
     <meta property="og:url" content="https://akarsh-weds-manasa.pages.dev/" />
     
     <!-- Primary Banner (1200x630) - Absolute HTTPS URL for WhatsApp -->
@@ -26,7 +26,7 @@
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Wedding Invitation - Akarsh K.R. & Manasa R." />
+    <meta property="og:image:alt" content="Akarsh and Manasa — wedding invitation, December 2026, Bengaluru" />
     
     <!-- WhatsApp Mobile Square Thumbnail -->
     <link rel="image_src" href="https://akarsh-weds-manasa.pages.dev/og-thumb.jpg" />
@@ -34,8 +34,8 @@
 
     <!-- Twitter Card (Large Banner Preview) -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Akarsh & Manasa | Wedding Invitation 💍" />
-    <meta name="twitter:description" content="Together with their families, cordially invite you to celebrate the marriage of Akarsh K.R. & Manasa R. on 12th & 13th December 2026, Bengaluru." />
+    <meta name="twitter:title" content="Akarsh & Manasa — Wedding Invitation" />
+    <meta name="twitter:description" content="Together with their families, they cordially invite you to grace their wedding — 12 & 13 December 2026, Bengaluru." />
     <meta name="twitter:image" content="https://akarsh-weds-manasa.pages.dev/og-banner.jpg" />
 
     <!-- Dynamic Absolute URL Resolver for WhatsApp Crawlers -->
@@ -44,22 +44,27 @@
         try {
           var origin = window.location.origin;
           if (origin && !origin.startsWith('file:')) {
-            var fullImageUrl = origin + '/og-banner.jpg';
+            var bannerUrl = origin + '/og-banner.jpg';
+            var thumbUrl = origin + '/og-thumb.jpg';
             var fullPageUrl = window.location.href;
 
             var ogImage = document.querySelector('meta[property="og:image"]');
-            if (ogImage) ogImage.setAttribute('content', fullImageUrl);
+            if (ogImage) ogImage.setAttribute('content', bannerUrl);
+
+            var ogImageUrl = document.querySelector('meta[property="og:image:url"]');
+            if (ogImageUrl) ogImageUrl.setAttribute('content', bannerUrl);
 
             var ogSecure = document.querySelector('meta[property="og:image:secure_url"]');
-            if (ogSecure) ogSecure.setAttribute('content', fullImageUrl);
+            if (ogSecure) ogSecure.setAttribute('content', bannerUrl);
+
+            var imageSrc = document.querySelector('link[rel="image_src"]');
+            if (imageSrc) imageSrc.setAttribute('href', thumbUrl);
 
             var twitterImage = document.querySelector('meta[name="twitter:image"]');
-            if (twitterImage) twitterImage.setAttribute('content', fullImageUrl);
+            if (twitterImage) twitterImage.setAttribute('content', bannerUrl);
 
-            var ogUrl = document.createElement('meta');
-            ogUrl.setAttribute('property', 'og:url');
-            ogUrl.setAttribute('content', fullPageUrl);
-            document.head.appendChild(ogUrl);
+            var ogUrl = document.querySelector('meta[property="og:url"]');
+            if (ogUrl) ogUrl.setAttribute('content', fullPageUrl);
           }
         } catch (e) {}
       })();
@@ -87,7 +92,7 @@
         }
       },
       "image": ["https://akarsh-weds-manasa.pages.dev/og-banner.jpg"],
-      "description": "Wedding Invitation of Akarsh K.R. & Manasa R. - 12th & 13th December 2026."
+      "description": "Akarsh K.R. and Manasa R. cordially invite you to their wedding, 12 and 13 December 2026, Bengaluru."
     }
     </script>
 

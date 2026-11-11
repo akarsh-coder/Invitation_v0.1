@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="paper" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBF7EF"/>
+      <stop offset="100%" stop-color="#EBE0D0"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B8860B"/>
+      <stop offset="50%" stop-color="#F3E0A0"/>
+      <stop offset="100%" stop-color="#996515"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="42%" r="40%">
+      <stop offset="0%" stop-color="#F3E0A0" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#F3E0A0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="1200" fill="url(#paper)"/>
+  <rect width="1200" height="1200" fill="url(#halo)"/>
+
+  <rect x="64" y="64" width="1072" height="1072" rx="8" fill="none" stroke="url(#gold)" stroke-width="3"/>
+  <rect x="88" y="88" width="1024" height="1024" rx="6" fill="none" stroke="#C59B27" stroke-width="1" opacity="0.4"/>
+
+  <!-- monogram seal -->
+  <circle cx="600" cy="520" r="200" fill="#FDFBF8" stroke="#C59B27" stroke-width="3"/>
+  <circle cx="600" cy="520" r="186" fill="none" stroke="#C59B27" stroke-width="1" opacity="0.45"/>
+
+  <text x="600" y="505" text-anchor="middle" font-family="Georgia, serif" font-size="120" fill="#4A1515">
+    A <tspan fill="#C59B27" font-style="italic">&amp;</tspan> M
+  </text>
+  <text x="600" y="575" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="22" fill="#8C6D18" letter-spacing="4">DEC 2026</text>
+
+  <text x="600" y="820" text-anchor="middle" font-family="Georgia, serif" font-size="52" fill="#4A1515">Akarsh &amp; Manasa</text>
+  <text x="600" y="880" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#6B3030" font-style="italic">Wedding Invitation</text>
+
+  <text x="600" y="980" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="24" fill="#5A1818" letter-spacing="3">12 &amp; 13 December</text>
+  <text x="600" y="1025" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#8C6D18">Bengaluru</text>
+</svg>
