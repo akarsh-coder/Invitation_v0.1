@@ -1,20 +1,12 @@
-export type Language = 'en' | 'kn';
-
 export interface WeddingEvent {
   id: string;
   title: string;
-  titleKannada: string;
   type: 'reception' | 'muhurtha';
   date: string;
-  dateKannada: string;
   time: string;
-  timeKannada: string;
   lagna?: string;
-  lagnaKannada?: string;
   venueName: string;
-  venueNameKannada: string;
   venueAddress: string;
-  venueAddressKannada: string;
   mapUrl: string;
   startDateISO: string;
   endDateISO: string;
@@ -22,10 +14,8 @@ export interface WeddingEvent {
 
 export interface EngagementPhotoItem {
   id: string;
-  titleEn: string;
-  titleKn: string;
-  dateEn?: string;
-  dateKn?: string;
+  title: string;
+  date?: string;
   url?: string;
   dummyUrl: string;
 }
@@ -45,6 +35,14 @@ export interface WeddingContent {
     ganapathi: string;
   };
   headerTagline: string;
+  display: {
+    groomFirstName: string;
+    brideFirstName: string;
+    coupleAlt: string;
+    dateLine: string;
+    city: string;
+    monthYear: string;
+  };
   hosts: {
     groomFamily: {
       parents: string;
@@ -87,6 +85,10 @@ export interface WeddingContent {
     targetDateISO: string;
     title: string;
     subText: string;
+  };
+  forTheDay: {
+    seating: string;
+    attire: string;
   };
   compliments: {
     heading: string;

@@ -9,7 +9,7 @@ interface CardProps {
 export const Card: React.FC<CardProps> = ({
   children,
   className = '',
-  enableTilt = true,
+  enableTilt = false,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
@@ -49,9 +49,7 @@ export const Card: React.FC<CardProps> = ({
           : 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)',
         transition: isHovered ? 'transform 0.1s ease-out' : 'transform 0.5s ease-out',
       }}
-      className={`relative bg-white/80 backdrop-blur-md rounded-2xl transition-all duration-300 ${
-        isHovered ? 'shadow-[0_20px_40px_-15px_rgba(90,24,24,0.08)] border-gold-400' : 'shadow-sm'
-      } ${className}`}
+      className={`relative bg-[#FDFBF8] rounded-2xl shadow-[0_20px_45px_-28px_rgba(61,18,18,0.28)] ${className}`}
     >
       <div className="relative z-10">{children}</div>
     </div>

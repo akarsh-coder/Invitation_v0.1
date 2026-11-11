@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Heart, ChevronUp } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { GoldDivider } from '../ornaments/GoldDivider';
 import { ShowerBlessings } from '../ui/ShowerBlessings';
 import { ShareModal } from '../ui/ShareModal';
-import type { WeddingContent, Language } from '../../types/wedding';
-
-interface CountdownSectionProps {
-  content: WeddingContent;
-  currentLang: Language;
-}
+import { ScrollReveal } from '../ui/ScrollMotion';
+import { useWeddingContent } from '../../store/weddingStore';
 
 interface TimeRemaining {
   days: number;
@@ -19,138 +13,114 @@ interface TimeRemaining {
   isPast: boolean;
 }
 
-export const CountdownSection: React.FC<CountdownSectionProps> = ({ content, currentLang }) => {
-  const targetDate = new Date('2026-12-13T10:40:00+05:30').getTime();
+export const CountdownSection: React.FC = () => {
+  const content = useWeddingContent();
+  const targetDate = new Date(content.countdown.targetDateISO).getTime();
+  const muhurtha = content.events.find((event) => event.type === 'muhurtha');
 
-  const calculateTimeRemaining = (): TimeRemaining => {
-    const now = new Date().getTime();
-    const difference = targetDate - now;
+  const calculateTimeRemaining = useCallback((): TimeRemaining => {
+    const difference = targetDate - Date.now();
 
     if (difference <= 0) {
       return { days: 0, hours: 0, minutes: 0, seconds: 0, isPast: true };
     }
 
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    return {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+      minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+      seconds: Math.floor((difference % (1000 * 60)) / 1000),
+      isPast: false,
+    };
+  }, [targetDate]);
 
-    return { days, hours, minutes, seconds, isPast: false };
-  };
-
-  const [timeLeft, setTimeLeft] = useState<TimeRemaining>(calculateTimeRemaining);
+  const [timeLeft, setTimeLeft] = useState<TimeRemaining>(() => calculateTimeRemaining());
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeRemaining());
     }, 1000);
-
     return () => clearInterval(timer);
-  }, [targetDate]);
+  }, [calculateTimeRemaining]);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const timeUnits = [
-    { label: currentLang === 'en' ? 'Days' : 'ದಿನಗಳು', value: timeLeft.days },
-    { label: currentLang === 'en' ? 'Hours' : 'ಗಂಟೆಗಳು', value: timeLeft.hours },
-    { label: currentLang === 'en' ? 'Minutes' : 'ನಿಮಿಷಗಳು', value: timeLeft.minutes },
-    { label: currentLang === 'en' ? 'Seconds' : 'ಸೆಕೆಂಡುಗಳು', value: timeLeft.seconds },
-  ];
+  const clock = `${String(timeLeft.hours).padStart(2, '0')} : ${String(timeLeft.minutes).padStart(2, '0')} : ${String(timeLeft.seconds).padStart(2, '0')}`;
 
   return (
-    <footer className="relative pt-12 pb-16 px-4 sm:px-8 max-w-4xl mx-auto z-10 text-center">
-      {/* Interactive Shower Blessings section */}
-      <ShowerBlessings currentLang={currentLang} />
+    <footer className="relative pt-6 sm:pt-8 pb-10 sm:pb-16 px-4 sm:px-8 max-w-3xl mx-auto z-10 text-center">
+      <ShowerBlessings />
 
-      {/* Modern Countdown Card */}
-      <motion.div
-        className="my-10 p-6 sm:p-10 rounded-2xl bg-white/80 border border-gold-300 shadow-sm max-w-2xl mx-auto backdrop-blur-md"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="text-[11px] sm:text-xs font-semibold tracking-[0.25em] text-gold-700 uppercase font-sans mb-1">
-          {content.countdown.title}
-        </div>
-        <div className="text-lg sm:text-2xl font-serif font-bold text-maroon-900 mb-6">
-          13th December 2026 • 10:40 AM IST
-        </div>
+      <ScrollReveal className="my-8 sm:my-12">
+        <div>
+          <p className="text-[11px] sm:text-xs uppercase text-gold-700 font-sans">
+            {content.countdown.title}
+          </p>
 
-        {/* Minimalist Countdown Units */}
-        <div className="grid grid-cols-4 gap-2.5 sm:gap-4 max-w-md mx-auto">
-          {timeUnits.map((unit, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl bg-[#FDFBF7] border border-gold-300/50"
-            >
-              <span className="font-cinzel text-xl sm:text-3xl font-bold text-maroon-950 tracking-tight">
-                {String(unit.value).padStart(2, '0')}
-              </span>
-              <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-gold-700 mt-1">
-                {unit.label}
-              </span>
-            </div>
-          ))}
-        </div>
+          {timeLeft.isPast ? (
+            <p className="mt-6 font-cormorant italic text-2xl sm:text-3xl text-maroon-950">
+              The muhurtha is here.
+            </p>
+          ) : (
+            <>
+              <p className="mt-4 font-cinzel text-6xl sm:text-8xl text-maroon-950 leading-none tabular-nums">
+                {timeLeft.days}
+              </p>
+              <p className="mt-2 text-[11px] uppercase text-gold-700 font-sans">Days</p>
+              <p className="mt-5 font-cormorant italic text-lg sm:text-xl text-maroon-800 tabular-nums">
+                {clock}
+              </p>
+            </>
+          )}
 
-        <p className="mt-6 text-xs sm:text-sm font-serif italic text-maroon-800/80">
-          &ldquo;{content.countdown.subText}&rdquo;
+          {muhurtha && (
+            <p className="mt-5 font-serif text-sm sm:text-base text-maroon-900">
+              {muhurtha.lagna}
+              <span className="mx-2 text-gold-600">·</span>
+              {muhurtha.time}
+            </p>
+          )}
+
+          <p className="mt-4 font-cormorant italic text-maroon-800/80">{content.countdown.subText}</p>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal className="my-7 sm:my-8" delay={0.05}>
+        <p className="text-[11px] uppercase text-gold-700 font-sans mb-3">
+          {content.actions.shareInvitation}
         </p>
-      </motion.div>
+        <ShareModal />
+      </ScrollReveal>
 
-      {/* Share with Family & Friends */}
-      <div className="my-8">
-        <div className="text-[11px] uppercase tracking-wider text-gold-700 font-semibold mb-3">
-          {currentLang === 'en' ? 'Share Invitation' : 'ಆಮಂತ್ರಣವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ'}
-        </div>
-        <ShareModal currentLang={currentLang} />
-      </div>
+      <GoldDivider variant="simple" className="my-7 sm:my-8 max-w-xs" />
 
-      <GoldDivider variant="simple" className="my-6 max-w-xs" />
-
-      {/* Compliments Section */}
-      <motion.div
-        className="my-8"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="text-xs uppercase tracking-widest text-gold-700 font-semibold">
-          {content.compliments.heading}
-        </div>
-        <div className="text-xl sm:text-2xl font-serif font-bold text-maroon-950 mt-1">
+      <ScrollReveal className="my-7 sm:my-8" delay={0.05}>
+        <p className="text-xs uppercase text-gold-700 font-sans">{content.compliments.heading}</p>
+        <p className="mt-2 font-cormorant italic text-xl sm:text-2xl text-maroon-950">
           {content.compliments.note}
-        </div>
-      </motion.div>
+        </p>
+      </ScrollReveal>
 
-      {/* Clean Monogram Footer */}
-      <div className="mt-10 flex flex-col items-center">
-        <div className="flex items-center gap-2 text-xs text-maroon-800 font-serif">
-          <span>Akarsh</span>
-          <Heart size={12} className="text-gold-600 fill-gold-600" />
-          <span>Manasa</span>
-        </div>
-        <div className="text-[11px] text-gold-700 font-sans tracking-wider mt-0.5">
-          December 2026
-        </div>
-      </div>
-
-      {/* Scroll to Top */}
-      <div className="mt-8">
+      <ScrollReveal className="mt-9 sm:mt-12 flex flex-col items-center" delay={0.1}>
+        <p className="font-serif text-sm text-maroon-900">
+          {content.display.groomFirstName}{' '}
+          <span className="text-gold-600 font-italiana">&</span>{' '}
+          {content.display.brideFirstName}
+        </p>
         <button
           type="button"
-          onClick={scrollToTop}
-          className="p-2.5 rounded-full bg-white hover:bg-gold-50 text-maroon-800 border border-gold-300 shadow-sm transition-all hover:scale-105 active:scale-95"
-          title="Back to Top"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="mt-6 flex h-32 w-32 flex-col items-center justify-center rounded-full border border-gold-500/70 bg-[#FDFBF8] shadow-[0_18px_40px_-28px_rgba(61,18,18,0.45)]"
           aria-label="Back to top"
         >
-          <ChevronUp size={18} />
+          <span className="font-italiana text-2xl leading-none text-maroon-950">
+            {content.display.groomFirstName.charAt(0)}{' '}
+            <span className="text-gold-600">&</span>{' '}
+            {content.display.brideFirstName.charAt(0)}
+          </span>
+          <span className="mt-2 whitespace-nowrap text-[8px] uppercase tracking-[0.12em] text-gold-700 font-sans">
+            {content.display.monthYear}
+          </span>
         </button>
-      </div>
+      </ScrollReveal>
     </footer>
   );
 };

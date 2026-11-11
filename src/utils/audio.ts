@@ -1,21 +1,24 @@
-// Universal Wedding Music Player
-// Supports both custom audio files (e.g. /music/background.mp3 or any audio track)
-// with automatic fallback to Web Audio API ambient Carnatic synthesizer if no custom file exists.
+// Plays the wedding track from public/music, falling back to a soft Web Audio
+// tanpura-and-flute synth when the file cannot be played.
+
+type Listener = (isPlaying: boolean) => void;
 
 class WeddingMusicPlayer {
   private audioElement: HTMLAudioElement | null = null;
   private customMusicUrl: string = '/music/background.mp3';
+  private customAudioFailed: boolean = false;
   private isUsingCustomAudio: boolean = false;
   private isPlaying: boolean = false;
+  private pendingStart: Promise<boolean> | null = null;
+  private pausedByVisibility: boolean = false;
+  private listeners = new Set<Listener>();
 
-  // Web Audio Synth Fallback fields
   private ctx: AudioContext | null = null;
   private intervalId: number | null = null;
   private masterGain: GainNode | null = null;
-  private droneGain: GainNode | null = null;
+  private droneNodes: AudioScheduledSourceNode[] = [];
   private melodyNoteIndex: number = 0;
 
-  // Auspicious Carnatic notes
   private scale = [
     293.66, 329.63, 369.99, 440.00, 493.88, 554.37, 587.33, 659.25, 739.99
   ];
@@ -29,40 +32,79 @@ class WeddingMusicPlayer {
     6, 4, 3, 2, 0
   ];
 
-  public setCustomMusicUrl(url: string) {
-    if (url && url.trim().length > 0) {
-      this.customMusicUrl = url.trim();
-      if (this.audioElement) {
-        this.audioElement.src = this.customMusicUrl;
-      }
+  constructor() {
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', this.handleVisibilityChange);
     }
   }
 
-  public async start(): Promise<boolean> {
-    if (this.isPlaying) return true;
+  public subscribe(listener: Listener): () => void {
+    this.listeners.add(listener);
+    listener(this.isPlaying);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
 
-    // 1. First, attempt to play the custom audio file if provided
-    if (this.customMusicUrl) {
+  private setPlaying(value: boolean) {
+    if (this.isPlaying === value) return;
+    this.isPlaying = value;
+    this.listeners.forEach((listener) => listener(value));
+  }
+
+  public setCustomMusicUrl(url: string) {
+    const next = url?.trim();
+    if (!next || next === this.customMusicUrl) return;
+
+    const wasPlaying = this.isPlaying;
+    if (wasPlaying) this.stop();
+
+    this.customMusicUrl = next;
+    this.customAudioFailed = false;
+    if (this.audioElement) {
+      this.audioElement.src = next;
+    }
+
+    if (wasPlaying) {
+      this.start().catch(() => {});
+    }
+  }
+
+  public start(): Promise<boolean> {
+    if (this.isPlaying) return Promise.resolve(true);
+    if (this.pendingStart) return this.pendingStart;
+
+    this.pendingStart = this.startInternal().finally(() => {
+      this.pendingStart = null;
+    });
+    return this.pendingStart;
+  }
+
+  private async startInternal(): Promise<boolean> {
+    if (this.customMusicUrl && !this.customAudioFailed) {
       try {
         if (!this.audioElement) {
           this.audioElement = new Audio(this.customMusicUrl);
           this.audioElement.loop = true;
           this.audioElement.volume = 0.6;
+          this.audioElement.preload = 'auto';
         }
 
-        // Test play
         await this.audioElement.play();
         this.isUsingCustomAudio = true;
-        this.isPlaying = true;
+        this.setPlaying(true);
         return true;
       } catch (err) {
-        // File may not exist or cannot play; seamlessly fall back to synthesizer
-        console.info('Custom audio not found or unplayable, using ambient synthesizer fallback.', err);
-        this.isUsingCustomAudio = false;
+        // NotAllowedError means the browser wants a user gesture; the file itself is fine.
+        if (!(err instanceof DOMException && err.name === 'NotAllowedError')) {
+          this.customAudioFailed = true;
+          console.info('Wedding track unavailable, using the ambient synth instead.', err);
+        } else {
+          return false;
+        }
       }
     }
 
-    // 2. Synthesizer fallback
     return this.startSynthesizer();
   }
 
@@ -79,20 +121,20 @@ class WeddingMusicPlayer {
         await this.ctx.resume();
       }
 
+      this.teardownSynth();
+
+      const now = this.ctx.currentTime;
       this.masterGain = this.ctx.createGain();
-      this.masterGain.gain.setValueAtTime(0.01, this.ctx.currentTime);
-      this.masterGain.gain.linearRampToValueAtTime(0.35, this.ctx.currentTime + 2.5);
+      this.masterGain.gain.setValueAtTime(0.001, now);
+      this.masterGain.gain.linearRampToValueAtTime(0.35, now + 2.5);
       this.masterGain.connect(this.ctx.destination);
 
       this.startTanpuraDrone();
 
-      this.isPlaying = true;
+      this.isUsingCustomAudio = false;
+      this.setPlaying(true);
       this.playNextMelodyNote();
-      this.intervalId = window.setInterval(() => {
-        if (this.isPlaying) {
-          this.playNextMelodyNote();
-        }
-      }, 1400);
+      this.intervalId = window.setInterval(() => this.playNextMelodyNote(), 1400);
 
       return true;
     } catch (e) {
@@ -103,37 +145,38 @@ class WeddingMusicPlayer {
 
   private startTanpuraDrone() {
     if (!this.ctx || !this.masterGain) return;
+    const ctx = this.ctx;
 
-    this.droneGain = this.ctx.createGain();
-    this.droneGain.gain.value = 0.2;
-    this.droneGain.connect(this.masterGain);
+    const droneGain = ctx.createGain();
+    droneGain.gain.value = 0.2;
+    droneGain.connect(this.masterGain);
 
-    const droneFreqs = [146.83, 220.0, 293.66];
-
-    droneFreqs.forEach((freq, idx) => {
-      const osc = this.ctx!.createOscillator();
-      const gain = this.ctx!.createGain();
-      const filter = this.ctx!.createBiquadFilter();
+    [146.83, 220.0, 293.66].forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
 
       osc.type = idx === 1 ? 'triangle' : 'sine';
-      osc.frequency.setValueAtTime(freq, this.ctx!.currentTime);
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
 
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(800, this.ctx!.currentTime);
-      gain.gain.setValueAtTime(0.12 / (idx + 1), this.ctx!.currentTime);
+      filter.frequency.setValueAtTime(800, ctx.currentTime);
+      gain.gain.setValueAtTime(0.12 / (idx + 1), ctx.currentTime);
 
-      const lfo = this.ctx!.createOscillator();
-      const lfoGain = this.ctx!.createGain();
-      lfo.frequency.setValueAtTime(0.25 + idx * 0.1, this.ctx!.currentTime);
-      lfoGain.gain.setValueAtTime(0.04, this.ctx!.currentTime);
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      lfo.frequency.setValueAtTime(0.25 + idx * 0.1, ctx.currentTime);
+      lfoGain.gain.setValueAtTime(0.04, ctx.currentTime);
       lfo.connect(lfoGain);
       lfoGain.connect(gain.gain);
       lfo.start();
 
       osc.connect(filter);
       filter.connect(gain);
-      gain.connect(this.droneGain!);
+      gain.connect(droneGain);
       osc.start();
+
+      this.droneNodes.push(osc, lfo);
     });
   }
 
@@ -167,7 +210,8 @@ class WeddingMusicPlayer {
     const vibratoGain = this.ctx.createGain();
     vibrato.frequency.setValueAtTime(5.2, now);
     vibratoGain.gain.setValueAtTime(3.5, now);
-    vibrato.connect(osc.frequency);
+    vibrato.connect(vibratoGain);
+    vibratoGain.connect(osc.frequency);
     vibrato.start(now);
 
     noteGain.gain.setValueAtTime(0.001, now);
@@ -186,36 +230,80 @@ class WeddingMusicPlayer {
     vibrato.stop(now + duration);
   }
 
-  public stop(): void {
-    if (this.isUsingCustomAudio && this.audioElement) {
-      this.audioElement.pause();
-    }
-
-    if (this.masterGain && this.ctx) {
-      this.masterGain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
-    }
-
+  private teardownSynth() {
     if (this.intervalId !== null) {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
-
-    this.isPlaying = false;
+    this.droneNodes.forEach((node) => {
+      try {
+        node.stop();
+      } catch {
+        // already stopped
+      }
+    });
+    this.droneNodes = [];
+    this.masterGain?.disconnect();
+    this.masterGain = null;
   }
 
-  public toggle(): boolean {
+  public stop(): void {
+    if (this.audioElement) {
+      this.audioElement.pause();
+    }
+
+    if (this.ctx && this.masterGain) {
+      const gain = this.masterGain;
+      const now = this.ctx.currentTime;
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.4);
+      if (this.intervalId !== null) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+      }
+      window.setTimeout(() => {
+        if (!this.isPlaying) this.teardownSynth();
+      }, 450);
+    }
+
+    this.setPlaying(false);
+  }
+
+  public toggle(): Promise<boolean> {
     if (this.isPlaying) {
       this.stop();
-      return false;
-    } else {
-      this.start();
-      return true;
+      return Promise.resolve(false);
     }
+    return this.start();
   }
 
   public getIsPlaying(): boolean {
     return this.isPlaying;
   }
+
+  private handleVisibilityChange = () => {
+    if (document.hidden) {
+      if (this.isPlaying) {
+        this.pausedByVisibility = true;
+        if (this.isUsingCustomAudio) {
+          this.audioElement?.pause();
+        } else {
+          this.ctx?.suspend().catch(() => {});
+        }
+      }
+      return;
+    }
+
+    if (this.pausedByVisibility) {
+      this.pausedByVisibility = false;
+      if (this.isUsingCustomAudio) {
+        this.audioElement?.play().catch(() => this.setPlaying(false));
+      } else {
+        this.ctx?.resume().catch(() => {});
+      }
+    }
+  };
 }
 
 export const musicPlayer = new WeddingMusicPlayer();

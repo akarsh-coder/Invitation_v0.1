@@ -1,131 +1,102 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Sparkles } from 'lucide-react';
 import { GoldDivider } from '../ornaments/GoldDivider';
-import type { WeddingContent, Language } from '../../types/wedding';
+import { LotusOrnament } from '../ornaments/LotusOrnament';
+import { ScrollParallaxPhoto, ScrollReveal } from '../ui/ScrollMotion';
 import { resolvePhoto } from '../../utils/image';
+import { useWeddingContent } from '../../store/weddingStore';
+import { useInvitationStore } from '../../store/invitationStore';
 
-interface HeroSectionProps {
-  content: WeddingContent;
-  currentLang: Language;
-}
-
-export const HeroSection: React.FC<HeroSectionProps> = ({ content, currentLang }) => {
+export const HeroSection: React.FC = () => {
+  const content = useWeddingContent();
+  const revealed = useInvitationStore((state) => state.hasOpenedInvitation);
   const heroImage = resolvePhoto(content.photos.heroCouple, content.photos.heroCoupleDummy);
 
   return (
-    <section className="relative min-h-[92vh] flex flex-col items-center justify-center pt-24 pb-16 px-4 sm:px-8 text-center">
-      <motion.div
-        className="max-w-4xl mx-auto flex flex-col items-center z-10 w-full"
-        initial={{ opacity: 0, y: 25 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, ease: 'easeOut' }}
-      >
-        {/* Sole Invocation: Ganapathi Only */}
-        <div className="mb-6">
-          <div className="inline-flex items-center gap-2 px-5 py-1.5 rounded-full border border-gold-400/50 bg-white/80 shadow-sm backdrop-blur-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold-600" />
-            <span className="text-xs sm:text-sm font-semibold tracking-widest text-maroon-900 uppercase font-sans">
-              {content.invocation.ganapathi}
-            </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-gold-600" />
-          </div>
-        </div>
+    <section className="relative flex flex-col items-center justify-center pt-20 pb-10 px-4 sm:pt-24 sm:pb-16 sm:px-8 text-center">
+      <div className="max-w-4xl mx-auto flex flex-col items-center z-10 w-full">
+        <ScrollReveal direction="down" amount={0.1}>
+          <LotusOrnament size={52} className="mb-3 text-gold-600" />
+        </ScrollReveal>
 
-        {/* Modern High-Editorial Names */}
-        <div className="my-2">
-          <div className="text-[11px] sm:text-xs font-sans tracking-[0.3em] uppercase text-gold-700 font-semibold mb-3">
-            {content.headerTagline}
-          </div>
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif font-bold text-maroon-950 tracking-tight leading-none">
-            Akarsh <span className="text-gold-600 font-light font-italiana">&</span> Manasa
+        <ScrollReveal delay={0.05} amount={0.1}>
+          <p className="font-cormorant text-lg sm:text-2xl text-maroon-950">
+            {content.invocation.ganapathi}
+          </p>
+        </ScrollReveal>
+
+        <ScrollReveal className="mt-6 sm:mt-8" delay={0.1} amount={0.1}>
+          <h1 className="text-[2.35rem] sm:text-6xl md:text-7xl font-serif text-maroon-950 tracking-tight leading-tight">
+            {content.display.groomFirstName}{' '}
+            <span className="text-gold-600 font-light font-italiana">&</span>{' '}
+            {content.display.brideFirstName}
           </h1>
-          <div className="text-xs sm:text-sm font-sans text-maroon-800/80 tracking-widest uppercase mt-3 font-medium">
-            12 & 13 December 2026 • Bengaluru
-          </div>
+          <p className="text-[11px] sm:text-sm font-sans text-maroon-800/80 uppercase mt-3 sm:mt-4">
+            {content.display.dateLine}
+            <span className="mx-2 text-gold-600">·</span>
+            {content.display.city}
+          </p>
+        </ScrollReveal>
+
+        <div className="my-6 sm:my-8 relative w-full flex justify-center">
+          <ScrollParallaxPhoto className="w-full flex justify-center" intensity={18}>
+            <div className="relative w-full max-w-[220px] sm:max-w-[300px] md:max-w-[360px] aspect-[4/5] rounded-t-[110px] sm:rounded-t-[150px] md:rounded-t-[180px] rounded-b-2xl p-[2px] bg-gradient-to-b from-[#F3E0A0] via-[#C59B27] to-[#8C6D18] shadow-[0_20px_38px_-24px_rgba(74,21,21,0.45)]">
+              <motion.div
+                className="w-full h-full rounded-t-[108px] sm:rounded-t-[148px] md:rounded-t-[178px] rounded-b-[14px] overflow-hidden bg-[#EFE6D8]"
+                initial={{ clipPath: 'inset(0 0 100% 0)' }}
+                animate={{ clipPath: revealed ? 'inset(0 0 0% 0)' : 'inset(0 0 100% 0)' }}
+                transition={{ duration: 1.3, delay: 0.45, ease: [0.77, 0, 0.18, 1] }}
+              >
+                <img
+                  src={heroImage}
+                  alt={content.display.coupleAlt}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out hover:scale-[1.035]"
+                />
+              </motion.div>
+            </div>
+          </ScrollParallaxPhoto>
         </div>
 
-        {/* Featured Engagement Couple Portrait (Bigger, Majestic & 100% Fluid Mobile Responsive) */}
-        <motion.div
-          className="my-10 relative group w-full flex justify-center"
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-        >
-          {/* Outer Royal Gold Glow */}
-          <div className="absolute -inset-4 max-w-[360px] sm:max-w-[440px] md:max-w-[500px] bg-gradient-to-b from-amber-300/25 via-gold-400/20 to-transparent rounded-t-[220px] rounded-b-[40px] blur-2xl opacity-75 group-hover:opacity-100 transition-opacity pointer-events-none" />
+        <ScrollReveal delay={0.05}>
+          <p className="font-cormorant italic text-lg sm:text-3xl text-maroon-900">
+            {content.hosts.invitationLead}
+          </p>
+        </ScrollReveal>
 
-          {/* Arched Luxury Gold Frame */}
-          <div className="relative w-full max-w-[340px] sm:max-w-[420px] md:max-w-[480px] aspect-[3/4.2] rounded-t-[170px] sm:rounded-t-[210px] md:rounded-t-[240px] rounded-b-3xl overflow-hidden p-2 sm:p-2.5 bg-gradient-to-b from-[#FFE89E] via-[#D4AF37] to-[#8C6D18] shadow-[0_25px_60px_rgba(74,21,21,0.22)]">
-            <div className="w-full h-full rounded-t-[162px] sm:rounded-t-[202px] md:rounded-t-[232px] rounded-b-2xl overflow-hidden relative bg-[#F7F2EA]">
-              <img
-                src={heroImage}
-                alt="Akarsh & Manasa"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              />
-              {/* Subtle Warm Inset Vignette */}
-              <div className="absolute inset-0 bg-gradient-to-t from-maroon-950/60 via-transparent to-transparent opacity-35 group-hover:opacity-15 transition-opacity" />
-            </div>
-          </div>
-
-          {/* Prominent "Forever & Always" Badge */}
-          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-6 py-2.5 rounded-full bg-white/95 border border-gold-400/90 shadow-xl text-xs sm:text-sm font-sans font-bold uppercase tracking-wider text-maroon-950 flex items-center gap-2 backdrop-blur-md whitespace-nowrap">
-            <Sparkles size={14} className="text-gold-600 animate-spin-slow shrink-0" />
-            <Heart size={14} className="text-rose-600 fill-rose-600 shrink-0" />
-            <span>Forever & Always</span>
-            <Sparkles size={14} className="text-gold-600 animate-spin-slow shrink-0" />
-          </div>
-        </motion.div>
-
-        {/* Lead Phrase: Together with their families */}
-        <div className="font-serif italic text-base sm:text-xl text-maroon-800/90 mb-5 mt-4">
-          {content.hosts.invitationLead}
-        </div>
-
-        {/* Two Families Presented Equitably and Elegantly */}
-        <div className="w-full max-w-3xl my-2 p-6 sm:p-8 rounded-2xl bg-white/80 border border-gold-300/50 backdrop-blur-md shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center text-center">
-            {/* Groom's Parents */}
-            <div className="space-y-1 md:border-r md:border-gold-300/40 md:pr-4">
-              <div className="text-[11px] uppercase tracking-wider text-gold-700 font-semibold font-sans">
-                {currentLang === 'en' ? "Groom's Parents" : 'ವರನ ಪೋಷಕರು'}
+        <ScrollReveal className="w-full max-w-3xl mt-6 sm:mt-8" delay={0.1}>
+          <div className="px-4 py-6 sm:px-10 sm:py-8 bg-[#FDFBF8]/80 shadow-[0_18px_40px_-30px_rgba(61,18,18,0.35)]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10 items-start text-center">
+              <div className="md:border-r md:border-maroon-900/10 md:pr-8">
+                <p className="text-[11px] uppercase text-gold-700 font-sans">Groom&apos;s parents</p>
+                <h3 className="mt-2 text-sm sm:text-lg font-serif text-maroon-950 text-balance">
+                  {content.hosts.groomFamily.parents}
+                </h3>
+                <p className="mt-1 font-cormorant italic text-maroon-800/75">
+                  {content.hosts.groomFamily.origin}
+                </p>
               </div>
-              <h3 className="text-base sm:text-lg font-serif font-bold text-maroon-950">
-                {content.hosts.groomFamily.parents}
-              </h3>
-              <div className="text-xs text-maroon-800/70 font-sans">
-                {content.hosts.groomFamily.origin}
-              </div>
-            </div>
 
-            {/* Bride's Parents */}
-            <div className="space-y-1 md:pl-4">
-              <div className="text-[11px] uppercase tracking-wider text-gold-700 font-semibold font-sans">
-                {currentLang === 'en' ? "Bride's Parents" : 'ವಧುವಿನ ಪೋಷಕರು'}
-              </div>
-              <h3 className="text-base sm:text-lg font-serif font-bold text-maroon-950">
-                {content.hosts.brideFamily.parents}
-              </h3>
-              <div className="text-xs text-maroon-800/70 font-sans">
-                {content.hosts.brideFamily.origin}
+              <div className="md:pl-2">
+                <p className="text-[11px] uppercase text-gold-700 font-sans">Bride&apos;s parents</p>
+                <h3 className="mt-2 text-sm sm:text-lg font-serif text-maroon-950 text-balance">
+                  {content.hosts.brideFamily.parents}
+                </h3>
+                <p className="mt-1 font-cormorant italic text-maroon-800/75">
+                  {content.hosts.brideFamily.origin}
+                </p>
               </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
-        {/* Divider */}
-        <GoldDivider variant="simple" className="my-6 max-w-md" />
+        <GoldDivider variant="simple" className="my-6 sm:my-8 max-w-xs" />
 
-        {/* Unified Invitation Text */}
-        <motion.p
-          className="max-w-2xl text-maroon-900/90 text-sm sm:text-base md:text-lg font-serif leading-relaxed px-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-        >
-          &ldquo;{content.invitationText}&rdquo;
-        </motion.p>
-      </motion.div>
+        <ScrollReveal className="max-w-2xl" delay={0.1}>
+          <p className="font-cormorant italic text-lg sm:text-2xl leading-relaxed text-maroon-900 px-2">
+            {content.invitationText}
+          </p>
+        </ScrollReveal>
+      </div>
     </section>
   );
 };

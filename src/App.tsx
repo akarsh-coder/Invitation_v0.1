@@ -1,6 +1,3 @@
-import { useState, useEffect } from 'react';
-import Lenis from 'lenis';
-import { FloatingBlobs } from './components/three/FloatingBlobs';
 import { CurtainEntrance } from './components/sections/CurtainEntrance';
 import { HeroSection } from './components/sections/HeroSection';
 import { CoupleSection } from './components/sections/CoupleSection';
@@ -8,103 +5,51 @@ import { EngagementGallery } from './components/sections/EngagementGallery';
 import { TimelineSection } from './components/sections/TimelineSection';
 import { VenueSection } from './components/sections/VenueSection';
 import { CountdownSection } from './components/sections/CountdownSection';
-import { LanguageSwitcher } from './components/ui/LanguageSwitcher';
 import { AudioPlayer } from './components/ui/AudioPlayer';
-import { PhotoCustomizer } from './components/ui/PhotoCustomizer';
-import { musicPlayer } from './utils/audio';
-import type { Language, WeddingPhotos } from './types/wedding';
-import { weddingContentEn, weddingContentKn, defaultWeddingPhotos } from './data/weddingContent';
+import { useAppBootstrap } from './hooks/useAppBootstrap';
+import { useInvitationStore } from './store/invitationStore';
+import { useWeddingContent } from './store/weddingStore';
 
 export function App() {
-  const [hasOpenedInvitation, setHasOpenedInvitation] = useState<boolean>(false);
-  const [currentLang, setCurrentLang] = useState<Language>('en');
-  const [photos, setPhotos] = useState<WeddingPhotos>(defaultWeddingPhotos);
-
-  // Configure custom music URL if provided
-  useEffect(() => {
-    const activeContent = currentLang === 'en' ? weddingContentEn : weddingContentKn;
-    if (activeContent.musicUrl) {
-      musicPlayer.setCustomMusicUrl(activeContent.musicUrl);
-    }
-  }, [currentLang]);
-
-  // Initialize smooth inertia scrolling via Lenis
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.1,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      smoothWheel: true,
-    });
-
-    let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-    rafId = requestAnimationFrame(raf);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      lenis.destroy();
-    };
-  }, []);
-
-  const baseContent = currentLang === 'en' ? weddingContentEn : weddingContentKn;
-  // Blend current dynamic photos into the content
-  const content = {
-    ...baseContent,
-    photos: photos,
-  };
+  useAppBootstrap();
+  const content = useWeddingContent();
+  const hasOpenedInvitation = useInvitationStore((state) => state.hasOpenedInvitation);
+  const groomInitial = content.display.groomFirstName.charAt(0);
+  const brideInitial = content.display.brideFirstName.charAt(0);
 
   return (
-    <div className={`relative min-h-screen bg-[#FAF8F5] text-[#4A1515] overflow-x-hidden selection:bg-gold-500 selection:text-white ${currentLang === 'kn' ? 'font-kannada' : 'font-sans'}`}>
-      {/* 1. 3D Out-of-Focus Floating Blobs (Off-White Backdrop) */}
-      <FloatingBlobs />
+    <div className="relative min-h-screen bg-[#F6F1E8] text-[#4A1515] overflow-x-hidden selection:bg-gold-500 selection:text-white font-sans">
+      <div className="pointer-events-none fixed inset-0 z-0 paper-texture" />
+      <div className="pointer-events-none fixed inset-0 z-0 paper-grain" />
 
-      {/* 2. Modern Hairline Inset Border Frame */}
-      <div className="fixed inset-3 sm:inset-5 border border-gold-400/25 rounded-2xl pointer-events-none z-20" />
+      <div className="hidden lg:block fixed inset-5 border border-gold-500/25 pointer-events-none z-20" />
 
-      {/* 3. Modern Folio Entrance */}
-      <CurtainEntrance
-        isOpen={hasOpenedInvitation}
-        onOpen={() => setHasOpenedInvitation(true)}
-        currentLang={currentLang}
-      />
+      <CurtainEntrance />
 
-      {/* 4. Floating Header with Audio, Photo Customizer & Language Switcher */}
-      <header className="fixed top-5 right-5 sm:top-7 sm:right-9 z-40 flex items-center gap-2 sm:gap-3">
-        <AudioPlayer autoStartOnFirstInteraction={false} />
-        <PhotoCustomizer
-          photos={photos}
-          onUpdatePhotos={(updated) => setPhotos(updated)}
-          currentLang={currentLang}
-        />
-        <LanguageSwitcher
-          currentLang={currentLang}
-          onLanguageChange={(lang) => setCurrentLang(lang)}
-        />
+      <header className="fixed top-5 left-5 right-5 z-40 flex items-start justify-between gap-3 sm:top-7 sm:left-9 sm:right-9">
+        <div
+          className={`pointer-events-none flex min-w-0 items-baseline gap-2 transition-opacity duration-700 sm:block ${
+            hasOpenedInvitation ? 'opacity-100' : 'opacity-0'
+          }`}
+          aria-hidden={!hasOpenedInvitation}
+        >
+          <p className="font-italiana text-[1.35rem] leading-none text-maroon-950 [text-shadow:0_0_12px_#F6F1E8,0_0_3px_#F6F1E8] sm:text-2xl">
+            {groomInitial} <span className="text-gold-600">&</span> {brideInitial}
+          </p>
+          <p className="text-[9px] uppercase tracking-[0.12em] text-gold-700 font-sans sm:mt-1 sm:text-[10px] sm:tracking-[0.14em]">
+            {content.display.dateLine}
+          </p>
+        </div>
+        <AudioPlayer />
       </header>
 
-      {/* 5. Main Invitation Sections */}
       <main className="relative z-10">
-        {/* Hero Section with Ganapathi Invocation & Featured Couple Portrait */}
-        <HeroSection content={content} currentLang={currentLang} />
-
-        {/* The Couple Showcase with Groom & Bride Portraits */}
-        <CoupleSection content={content} currentLang={currentLang} />
-
-        {/* Engagement Moments / Story Gallery with Lightbox */}
-        <EngagementGallery photos={photos} currentLang={currentLang} />
-
-        {/* Sacred Ceremonies Itinerary */}
-        <TimelineSection content={content} currentLang={currentLang} />
-
-        {/* Venues & Directions */}
-        <VenueSection content={content} currentLang={currentLang} />
-
-        {/* Live Countdown, Blessings & Footer */}
-        <CountdownSection content={content} currentLang={currentLang} />
+        <HeroSection />
+        <CoupleSection />
+        <EngagementGallery />
+        <TimelineSection />
+        <VenueSection />
+        <CountdownSection />
       </main>
     </div>
   );

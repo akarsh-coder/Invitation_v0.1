@@ -1,169 +1,129 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Download, ExternalLink, Sparkles } from 'lucide-react';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
 import { GoldDivider } from '../ornaments/GoldDivider';
-import type { WeddingContent, Language } from '../../types/wedding';
+import { KalashaIcon } from '../ornaments/KalashaIcon';
+import { Button } from '../ui/Button';
+import { ScrollReveal } from '../ui/ScrollMotion';
+import type { WeddingEvent } from '../../types/wedding';
 import { generateGoogleCalendarUrl, downloadICSFile } from '../../utils/calendar';
+import { useWeddingContent } from '../../store/weddingStore';
 
-interface TimelineSectionProps {
-  content: WeddingContent;
-  currentLang: Language;
+function ReceptionCard({ event, addToCalendarLabel }: { event: WeddingEvent; addToCalendarLabel: string }) {
+  return (
+    <ScrollReveal>
+      <article className="bg-[#FDFBF8]/90 px-4 py-5 sm:px-8 sm:py-7 shadow-[0_18px_40px_-30px_rgba(61,18,18,0.35)]">
+        <h3 className="font-serif text-xl sm:text-2xl text-maroon-950">{event.title}</h3>
+        <p className="mt-2 font-cormorant italic text-base sm:text-lg text-maroon-800">{event.date}</p>
+        <p className="mt-4 font-sans text-sm text-maroon-950">{event.time}</p>
+        <p className="mt-1 font-cormorant text-base text-maroon-900">{event.venueName}</p>
+        <div className="mt-5 sm:mt-6 flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2">
+          <a href={generateGoogleCalendarUrl(event)} target="_blank" rel="noopener noreferrer">
+            <Button variant="outline" size="sm">
+              {addToCalendarLabel}
+            </Button>
+          </a>
+          <button
+            type="button"
+            onClick={() => downloadICSFile(event)}
+            className="text-sm text-maroon-800 underline underline-offset-4 decoration-gold-500/70"
+          >
+            Download .ics
+          </button>
+          <a
+            href={event.mapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-maroon-800 underline underline-offset-4 decoration-gold-500/70"
+          >
+            Map
+          </a>
+        </div>
+      </article>
+    </ScrollReveal>
+  );
 }
 
-export const TimelineSection: React.FC<TimelineSectionProps> = ({ content, currentLang }) => {
+export const TimelineSection: React.FC = () => {
+  const content = useWeddingContent();
+  const muhurthaIndex = content.events.findIndex((event) => event.type === 'muhurtha');
+  const muhurtha = muhurthaIndex >= 0 ? content.events[muhurthaIndex] : undefined;
+  const before = muhurthaIndex >= 0 ? content.events.slice(0, muhurthaIndex) : content.events;
+  const after = muhurthaIndex >= 0 ? content.events.slice(muhurthaIndex + 1) : [];
+  const addToCalendar = content.actions.addToCalendar;
+
   return (
-    <section id="ceremonies" className="relative py-16 px-4 sm:px-8 max-w-6xl mx-auto z-10">
-      {/* Section Header */}
-      <div className="text-center mb-12">
-        <div className="text-[11px] sm:text-xs font-semibold tracking-[0.25em] text-gold-700 uppercase font-sans">
-          {currentLang === 'en' ? 'Itinerary' : 'ಶುಭ ಕಾರ್ಯಕ್ರಮಗಳು'}
+    <section id="ceremonies" className="relative z-10 pt-6 sm:pt-8">
+      <ScrollReveal amount={0.4}>
+        <div className="bg-[#2A070C] text-[#F8EFD6]">
+          <div className="max-w-3xl mx-auto px-4 py-10 sm:px-6 sm:py-14 text-center">
+            <p className="font-cinzel text-2xl sm:text-4xl tracking-[0.08em] text-[#FFF6DF]">
+              12 <span className="text-gold-300">·</span> 13 <span className="text-gold-300">·</span> 16 December
+            </p>
+            <p className="mt-3 font-cormorant italic text-base sm:text-xl text-gold-200">
+              Bengaluru
+              <span className="mx-2 text-gold-400">·</span>
+              Hiremagaluru
+            </p>
+          </div>
         </div>
-        <h2 className="text-2xl sm:text-4xl font-serif font-bold text-maroon-900 mt-1">
-          {currentLang === 'en' ? 'Wedding Ceremonies' : 'ಕಾರ್ಯಕ್ರಮಗಳ ವಿವರ'}
-        </h2>
+      </ScrollReveal>
+
+      <ScrollReveal className="max-w-3xl mx-auto px-4 sm:px-8 text-center mt-8 sm:mt-12">
+        <p className="text-[11px] sm:text-xs uppercase text-gold-700 font-sans">Itinerary</p>
+        <h2 className="mt-2 font-serif text-2xl sm:text-4xl text-maroon-950">The ceremonies</h2>
         <GoldDivider variant="simple" className="my-4 max-w-xs" />
+      </ScrollReveal>
+
+      <div className="max-w-3xl mx-auto px-4 sm:px-8 mt-6 sm:mt-8 space-y-4 sm:space-y-6">
+        {before.map((event) => (
+          <ReceptionCard key={event.id} event={event} addToCalendarLabel={addToCalendar} />
+        ))}
       </div>
 
-      {/* Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-        {content.events.map((event, index) => {
-          const isMuhurtha = event.type === 'muhurtha';
+      {muhurtha && (
+        <ScrollReveal className="my-8 sm:my-12" amount={0.35}>
+          <div className="bg-[#2A070C] text-[#F8EFD6]">
+            <div className="max-w-3xl mx-auto px-4 py-10 sm:px-6 sm:py-20 text-center">
+              <p className="text-[11px] sm:text-xs uppercase text-gold-300 font-sans">{muhurtha.title}</p>
+              <KalashaIcon size={46} className="mt-4" />
+              <h3 className="mt-3 font-serif text-3xl sm:text-6xl text-[#FFF6DF]">
+                {muhurtha.lagna ?? muhurtha.title}
+              </h3>
+              <p className="mt-4 font-cormorant italic text-lg sm:text-2xl text-gold-200">{muhurtha.date}</p>
+              <p className="mt-5 sm:mt-6 font-cinzel text-xl sm:text-4xl text-gold-300">{muhurtha.time}</p>
+              <p className="mt-4 font-cormorant text-lg text-gold-100/85">{muhurtha.venueName}</p>
+              <p className="mt-1 text-xs sm:text-sm text-gold-100/60 font-sans">{muhurtha.venueAddress}</p>
 
-          return (
-            <motion.div
-              key={event.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.12, duration: 0.6 }}
-              className="flex"
-            >
-              <Card
-                className={`flex-1 flex flex-col justify-between p-6 sm:p-7 ${
-                  isMuhurtha
-                    ? 'border-1.5 border-gold-500 bg-gradient-to-b from-white via-[#FCFBF7] to-[#F9F5EC] shadow-md ring-1 ring-gold-400/40'
-                    : 'border border-gold-300/60 hover:border-gold-400'
-                }`}
-              >
-                <div>
-                  {/* Top Badge */}
-                  <div className="flex items-center justify-between mb-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider ${
-                        isMuhurtha
-                          ? 'bg-maroon-800 text-gold-200 shadow-sm'
-                          : 'bg-gold-500/10 text-maroon-900 border border-gold-400/30'
-                      }`}
-                    >
-                      {isMuhurtha && <Sparkles size={11} className="text-gold-300" />}
-                      <span>{currentLang === 'en' ? event.title : event.titleKannada}</span>
-                    </span>
-                  </div>
+              <div className="mt-7 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+                <a href={generateGoogleCalendarUrl(muhurtha)} target="_blank" rel="noopener noreferrer">
+                  <Button variant="gold" size="sm">
+                    {addToCalendar}
+                  </Button>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => downloadICSFile(muhurtha)}
+                  className="text-sm text-gold-200 underline underline-offset-4 decoration-gold-300/50"
+                >
+                  Download .ics
+                </button>
+                <a
+                  href={muhurtha.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gold-200 underline underline-offset-4 decoration-gold-300/50"
+                >
+                  Map
+                </a>
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+      )}
 
-                  {/* Event Title */}
-                  <h3 className="text-xl sm:text-2xl font-serif font-bold text-maroon-950 mb-3">
-                    {currentLang === 'en' ? event.title : event.titleKannada}
-                  </h3>
-
-                  {/* Makara Lagna Highlight (Muhurtha only - Clean & Modern) */}
-                  {isMuhurtha && event.lagna && (
-                    <div className="my-3 px-3.5 py-2 rounded-xl bg-gold-100/70 border border-gold-400/60 flex items-center justify-between">
-                      <span className="text-[11px] uppercase font-bold tracking-wider text-maroon-800">
-                        {currentLang === 'en' ? 'Lagna' : 'ಲಗ್ನ'}
-                      </span>
-                      <span className="text-xs sm:text-sm font-serif font-bold text-maroon-950">
-                        {currentLang === 'en' ? event.lagna : event.lagnaKannada}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Details List */}
-                  <div className="space-y-3 mt-4 text-xs sm:text-sm text-maroon-900/90 font-sans">
-                    {/* Date */}
-                    <div className="flex items-start gap-2.5">
-                      <Calendar size={15} className="text-gold-600 shrink-0 mt-0.5" />
-                      <div className="font-semibold text-maroon-950">
-                        {currentLang === 'en' ? event.date : event.dateKannada}
-                      </div>
-                    </div>
-
-                    {/* Time */}
-                    <div className="flex items-start gap-2.5">
-                      <Clock size={15} className="text-gold-600 shrink-0 mt-0.5" />
-                      <div className="font-semibold text-maroon-950">
-                        {currentLang === 'en' ? event.time : event.timeKannada}
-                      </div>
-                    </div>
-
-                    {/* Venue */}
-                    <div className="flex items-start gap-2.5">
-                      <MapPin size={15} className="text-gold-600 shrink-0 mt-0.5" />
-                      <div>
-                        <div className="font-semibold text-maroon-950 font-serif">
-                          {currentLang === 'en' ? event.venueName : event.venueNameKannada}
-                        </div>
-                        <div className="text-[11px] text-maroon-700/80 mt-0.5 leading-tight">
-                          {currentLang === 'en' ? event.venueAddress : event.venueAddressKannada}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Action Buttons (Add to Calendar & Map) */}
-                <div className="mt-6 pt-4 border-t border-gold-300/40 space-y-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    {/* Add to Google Calendar */}
-                    <a
-                      href={generateGoogleCalendarUrl(event)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full"
-                    >
-                      <Button
-                        variant={isMuhurtha ? 'gold' : 'outline'}
-                        size="sm"
-                        icon={<ExternalLink size={12} />}
-                        className="w-full text-[11px] py-1.5"
-                      >
-                        {currentLang === 'en' ? 'Google Cal' : 'ಕ್ಯಾಲೆಂಡರ್'}
-                      </Button>
-                    </a>
-
-                    {/* Download ICS file */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => downloadICSFile(event)}
-                      icon={<Download size={12} />}
-                      className="w-full text-[11px] py-1.5"
-                    >
-                      {currentLang === 'en' ? '.ICS File' : '.ICS ಫೈಲ್'}
-                    </Button>
-                  </div>
-
-                  {/* Directions Button */}
-                  <a
-                    href={event.mapUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full"
-                  >
-                    <button
-                      type="button"
-                      className="w-full py-1 text-center text-[11px] text-gold-700 hover:text-maroon-900 font-medium hover:underline flex items-center justify-center gap-1 transition-colors"
-                    >
-                      <MapPin size={11} />
-                      <span>{currentLang === 'en' ? 'View Location Map' : 'ನಕ್ಷೆಯಲ್ಲಿ ವೀಕ್ಷಿಸಿ'}</span>
-                    </button>
-                  </a>
-                </div>
-              </Card>
-            </motion.div>
-          );
-        })}
+      <div className="max-w-3xl mx-auto px-4 sm:px-8 space-y-4 sm:space-y-6 pb-4">
+        {after.map((event) => (
+          <ReceptionCard key={event.id} event={event} addToCalendarLabel={addToCalendar} />
+        ))}
       </div>
     </section>
   );
