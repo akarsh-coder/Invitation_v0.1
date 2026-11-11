@@ -6,6 +6,7 @@ import { TimelineSection } from './components/sections/TimelineSection';
 import { VenueSection } from './components/sections/VenueSection';
 import { CountdownSection } from './components/sections/CountdownSection';
 import { AudioPlayer } from './components/ui/AudioPlayer';
+import { ScrollHint } from './components/ui/ScrollHint';
 import { useAppBootstrap } from './hooks/useAppBootstrap';
 import { useInvitationStore } from './store/invitationStore';
 import { useWeddingContent } from './store/weddingStore';
@@ -25,6 +26,7 @@ export function App() {
       <div className="hidden lg:block fixed inset-5 border border-gold-500/25 pointer-events-none z-20" />
 
       <CurtainEntrance />
+      <ScrollHint />
 
       <header className="fixed top-5 left-5 right-5 z-40 flex items-start justify-between gap-3 sm:top-7 sm:left-9 sm:right-9">
         <div
