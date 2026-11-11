@@ -101,6 +101,8 @@ export interface WeddingContent {
     shareInvitation: string;
     openInvitation: string;
     tapToOpen: string;
+    scrollForDetails: string;
+    scrollHintAria: string;
     musicOn: string;
     musicOff: string;
     copied: string;

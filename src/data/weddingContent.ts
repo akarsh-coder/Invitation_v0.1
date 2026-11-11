@@ -154,6 +154,8 @@ export const weddingContent: WeddingContent = {
     shareInvitation: 'Share Invitation',
     openInvitation: 'Open Invitation',
     tapToOpen: 'Tap the seal.',
+    scrollForDetails: 'Scroll for more',
+    scrollHintAria: 'Scroll down for more invitation details',
     musicOn: 'Play Ambient Melody',
     musicOff: 'Mute Music',
     copied: 'Link copied to clipboard!',

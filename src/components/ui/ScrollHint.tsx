@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { ChevronsDown } from 'lucide-react';
 import { useInvitationStore } from '../../store/invitationStore';
+import { useWeddingContent } from '../../store/weddingStore';
 
-const SCROLL_DISMISS_Y = 40;
+const SCROLL_DISMISS_Y = 48;
 
 export function ScrollHint() {
+  const content = useWeddingContent();
   const revealed = useInvitationStore((state) => state.hasOpenedInvitation);
   const reduceMotion = useReducedMotion();
   const [dismissed, setDismissed] = useState(false);
@@ -17,7 +20,7 @@ export function ScrollHint() {
       return;
     }
 
-    const delayMs = reduceMotion ? 350 : 1400;
+    const delayMs = reduceMotion ? 400 : 1500;
     const timer = window.setTimeout(() => setShowAfterReveal(true), delayMs);
     return () => window.clearTimeout(timer);
   }, [revealed, reduceMotion]);
@@ -42,36 +45,45 @@ export function ScrollHint() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="pointer-events-none fixed bottom-5 left-1/2 z-30 flex -translate-x-1/2 flex-col items-center sm:bottom-7"
+          className="pointer-events-none fixed inset-x-0 bottom-0 z-[45] flex justify-center bg-gradient-to-t from-[#F6F1E8] from-35% via-[#F6F1E8]/75 to-transparent px-4 pb-7 pt-20 sm:pb-9"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.45 } }}
-          transition={{ duration: 0.55, ease: 'easeOut' }}
+          exit={{ opacity: 0, transition: { duration: 0.5 } }}
+          transition={{ duration: 0.65, ease: 'easeOut' }}
           aria-hidden
         >
           <motion.div
-            className="flex flex-col items-center text-gold-700/75"
+            className="flex flex-col items-center gap-2.5 text-center"
             animate={reduceMotion ? undefined : { y: [0, 5, 0] }}
             transition={
-              reduceMotion
-                ? undefined
-                : { duration: 1.85, repeat: Infinity, ease: 'easeInOut' }
+              reduceMotion ? undefined : { duration: 2.4, repeat: Infinity, ease: 'easeInOut' }
             }
           >
-            <span className="block h-7 w-px bg-gradient-to-b from-gold-600/0 via-gold-600/55 to-gold-600/80" />
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mt-0.5 opacity-90"
+            <motion.p
+              className="font-cormorant text-lg italic leading-none text-maroon-900/90 sm:text-xl"
+              animate={reduceMotion ? undefined : { opacity: [0.72, 1, 0.72] }}
+              transition={
+                reduceMotion ? undefined : { duration: 2.4, repeat: Infinity, ease: 'easeInOut' }
+              }
             >
-              <path d="M6 9l6 6 6-6" />
-            </svg>
+              {content.actions.scrollForDetails}
+            </motion.p>
+
+            <span className="flex items-center gap-2 text-gold-600/80">
+              <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold-500/70 sm:w-14" />
+              <motion.span
+                className="flex text-gold-600"
+                animate={reduceMotion ? undefined : { y: [0, 3, 0] }}
+                transition={
+                  reduceMotion
+                    ? undefined
+                    : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }
+                }
+              >
+                <ChevronsDown size={22} strokeWidth={1.35} aria-hidden />
+              </motion.span>
+              <span className="h-px w-10 bg-gradient-to-l from-transparent to-gold-500/70 sm:w-14" />
+            </span>
           </motion.div>
         </motion.div>
       )}
