@@ -13,15 +13,17 @@ export const HeroSection: React.FC = () => {
   const heroImage = resolvePhoto(content.photos.heroCouple, content.photos.heroCoupleDummy);
 
   return (
-    <section className="relative flex flex-col items-center justify-center pb-10 px-4 pt-14 sm:pb-16 sm:px-8 sm:pt-[4.25rem] text-center">
-      <div className="max-w-4xl mx-auto flex flex-col items-center z-10 w-full -mt-1 sm:-mt-0.5">
-        <ScrollReveal direction="down" amount={0.1}>
-          <LotusOrnament size={48} className="text-gold-600 sm:scale-[1.08]" />
-        </ScrollReveal>
+    <section className="relative flex flex-col items-center justify-center pb-10 px-4 pt-[4.75rem] sm:pb-16 sm:px-8 sm:pt-[4.25rem] text-center">
+      <div className="max-w-4xl mx-auto flex flex-col items-center z-10 w-full sm:-mt-0.5">
+        <div className="mt-4 sm:mt-0 flex w-full flex-col items-center">
+          <ScrollReveal direction="down" amount={0.1}>
+            <LotusOrnament size={48} className="text-gold-600 sm:scale-[1.08]" />
+          </ScrollReveal>
 
-        <ScrollReveal className="mt-2 sm:mt-2.5" delay={0.05} amount={0.1}>
-          <p className="font-cormorant text-lg text-maroon-950 sm:text-2xl">{content.invocation.ganapathi}</p>
-        </ScrollReveal>
+          <ScrollReveal className="mt-2.5 sm:mt-2.5" delay={0.05} amount={0.1}>
+            <p className="font-cormorant text-lg text-maroon-950 sm:text-2xl">{content.invocation.ganapathi}</p>
+          </ScrollReveal>
+        </div>
 
         <ScrollReveal className="mt-6 sm:mt-8" delay={0.1} amount={0.1}>
           <h1 className="text-[2.35rem] sm:text-6xl md:text-7xl font-serif text-maroon-950 tracking-tight leading-tight">
