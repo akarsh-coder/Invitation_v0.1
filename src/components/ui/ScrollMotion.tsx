@@ -18,13 +18,25 @@ interface ScrollRevealProps {
   once?: boolean;
 }
 
-const offsetByDirection: Record<RevealDirection, { x?: number; y?: number }> = {
-  up: { y: 34 },
-  down: { y: -28 },
-  left: { x: 34 },
-  right: { x: -34 },
-  none: {},
+interface RevealPose {
+  x?: number;
+  y?: number;
+  rotateX?: number;
+  rotateY?: number;
+  rotate?: number;
+  scale: number;
+  origin: string;
+}
+
+const poseByDirection: Record<RevealDirection, RevealPose> = {
+  up: { y: 42, rotateX: 18, scale: 0.95, origin: '50% 100%' },
+  down: { y: -34, rotateX: -16, scale: 0.95, origin: '50% 0%' },
+  left: { x: 48, rotateY: -22, rotate: 1.5, scale: 0.93, origin: '100% 50%' },
+  right: { x: -48, rotateY: 22, rotate: -1.5, scale: 0.93, origin: '0% 50%' },
+  none: { scale: 0.84, origin: '50% 50%' },
 };
+
+const settledPose = { opacity: 1, x: 0, y: 0, rotateX: 0, rotateY: 0, rotate: 0, scale: 1, filter: 'blur(0px)' };
 
 function useCompactMotion() {
   const [isCompact, setIsCompact] = useState(false);
@@ -59,27 +71,42 @@ export function ScrollReveal({
   const reduceMotion = useReducedMotion();
   const isCompact = useCompactMotion();
   const scrollReady = useInvitationStore((state) => state.hasOpenedInvitation);
-  const offset: { x?: number; y?: number } = reduceMotion
-    ? {}
-    : scaleOffset(offsetByDirection[direction], isCompact ? 0.45 : 1);
-  const viewportAmount = isCompact ? Math.min(amount, 0.1) : amount;
-  const viewportMargin = isCompact ? '0px 0px 6% 0px' : '0px 0px -10% 0px';
+  const pose = poseByDirection[direction];
+  const offset = scaleOffset(pose, isCompact ? 0.45 : 1);
+  const tilt = isCompact ? 0.6 : 1;
+  const hiddenPose = reduceMotion
+    ? settledPose
+    : {
+        opacity: 0,
+        x: offset.x ?? 0,
+        y: offset.y ?? 0,
+        rotateX: (pose.rotateX ?? 0) * tilt,
+        rotateY: (pose.rotateY ?? 0) * tilt,
+        rotate: (pose.rotate ?? 0) * tilt,
+        scale: pose.scale,
+        filter: `blur(${isCompact ? 4 : 8}px)`,
+      };
+  const viewportAmount = isCompact ? Math.min(amount, 0.15) : amount;
+  const viewportMargin = '0px 0px -5% 0px';
+  const revealDelay = isCompact ? Math.min(delay, 0.08) : delay;
 
   return (
     <motion.div
       className={className}
-      initial={{ opacity: reduceMotion ? 1 : 0, ...offset }}
-      animate={
-        scrollReady || reduceMotion
-          ? undefined
-          : { opacity: 0, x: offset.x ?? 0, y: offset.y ?? 0 }
-      }
-      whileInView={scrollReady ? { opacity: 1, x: 0, y: 0 } : undefined}
+      style={{ transformPerspective: 900, transformOrigin: pose.origin }}
+      initial={hiddenPose}
+      animate={scrollReady || reduceMotion ? undefined : hiddenPose}
+      whileInView={scrollReady ? settledPose : undefined}
       viewport={{ once, amount: viewportAmount, margin: viewportMargin }}
       transition={{
-        duration: isCompact ? 0.55 : 0.8,
-        delay: isCompact ? Math.min(delay, 0.05) : delay,
-        ease: [0.22, 1, 0.36, 1],
+        default: {
+          type: 'spring',
+          duration: isCompact ? 0.85 : 1.1,
+          bounce: 0.28,
+          delay: revealDelay,
+        },
+        opacity: { duration: 0.6, ease: 'easeOut', delay: revealDelay },
+        filter: { duration: isCompact ? 0.6 : 0.8, ease: [0.22, 1, 0.36, 1], delay: revealDelay },
       }}
     >
       {children}
