@@ -59,7 +59,7 @@ export function ScrollReveal({
   const reduceMotion = useReducedMotion();
   const isCompact = useCompactMotion();
   const scrollReady = useInvitationStore((state) => state.hasOpenedInvitation);
-  const offset = reduceMotion
+  const offset: { x?: number; y?: number } = reduceMotion
     ? {}
     : scaleOffset(offsetByDirection[direction], isCompact ? 0.45 : 1);
   const viewportAmount = isCompact ? Math.min(amount, 0.1) : amount;
