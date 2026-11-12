@@ -5,6 +5,7 @@ import {
   useScroll,
   useTransform,
 } from 'framer-motion';
+import { useInvitationStore } from '../../store/invitationStore';
 
 type RevealDirection = 'up' | 'down' | 'left' | 'right' | 'none';
 
@@ -57,16 +58,24 @@ export function ScrollReveal({
 }: ScrollRevealProps) {
   const reduceMotion = useReducedMotion();
   const isCompact = useCompactMotion();
+  const scrollReady = useInvitationStore((state) => state.hasOpenedInvitation);
   const offset = reduceMotion
     ? {}
     : scaleOffset(offsetByDirection[direction], isCompact ? 0.45 : 1);
+  const viewportAmount = isCompact ? Math.min(amount, 0.1) : amount;
+  const viewportMargin = isCompact ? '0px 0px 6% 0px' : '0px 0px -10% 0px';
 
   return (
     <motion.div
       className={className}
       initial={{ opacity: reduceMotion ? 1 : 0, ...offset }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once, amount, margin: '0px 0px -10% 0px' }}
+      animate={
+        scrollReady || reduceMotion
+          ? undefined
+          : { opacity: 0, x: offset.x ?? 0, y: offset.y ?? 0 }
+      }
+      whileInView={scrollReady ? { opacity: 1, x: 0, y: 0 } : undefined}
+      viewport={{ once, amount: viewportAmount, margin: viewportMargin }}
       transition={{
         duration: isCompact ? 0.55 : 0.8,
         delay: isCompact ? Math.min(delay, 0.05) : delay,

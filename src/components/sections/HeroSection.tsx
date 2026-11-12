@@ -55,13 +55,13 @@ export const HeroSection: React.FC = () => {
           </ScrollParallaxPhoto>
         </div>
 
-        <ScrollReveal delay={0.05}>
+        <ScrollReveal delay={0.05} amount={0.08}>
           <p className="font-cormorant italic text-lg sm:text-3xl text-maroon-900">
             {content.hosts.invitationLead}
           </p>
         </ScrollReveal>
 
-        <ScrollReveal className="w-full max-w-3xl mt-6 sm:mt-8" delay={0.1}>
+        <ScrollReveal className="w-full max-w-3xl mt-6 sm:mt-8" delay={0.1} amount={0.08}>
           <div className="px-4 py-6 sm:px-10 sm:py-8 bg-[#FDFBF8]/80 shadow-[0_18px_40px_-30px_rgba(61,18,18,0.35)]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10 items-start text-center">
               <div className="md:border-r md:border-maroon-900/10 md:pr-8">
