@@ -27,6 +27,9 @@ export interface WeddingPhotos {
   groomPortraitDummy: string;
   bridePortrait?: string;
   bridePortraitDummy: string;
+  muhurthaMoment?: string;
+  receptionBengaluru?: string;
+  receptionHiremagaluru?: string;
   gallery: EngagementPhotoItem[];
 }
 

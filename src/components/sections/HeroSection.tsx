@@ -13,16 +13,14 @@ export const HeroSection: React.FC = () => {
   const heroImage = resolvePhoto(content.photos.heroCouple, content.photos.heroCoupleDummy);
 
   return (
-    <section className="relative flex flex-col items-center justify-center pt-20 pb-10 px-4 sm:pt-24 sm:pb-16 sm:px-8 text-center">
-      <div className="max-w-4xl mx-auto flex flex-col items-center z-10 w-full">
+    <section className="relative flex flex-col items-center justify-center pb-10 px-4 pt-14 sm:pb-16 sm:px-8 sm:pt-[4.25rem] text-center">
+      <div className="max-w-4xl mx-auto flex flex-col items-center z-10 w-full -mt-1 sm:-mt-0.5">
         <ScrollReveal direction="down" amount={0.1}>
-          <LotusOrnament size={52} className="mb-3 text-gold-600" />
+          <LotusOrnament size={48} className="text-gold-600 sm:scale-[1.08]" />
         </ScrollReveal>
 
-        <ScrollReveal delay={0.05} amount={0.1}>
-          <p className="font-cormorant text-lg sm:text-2xl text-maroon-950">
-            {content.invocation.ganapathi}
-          </p>
+        <ScrollReveal className="mt-2 sm:mt-2.5" delay={0.05} amount={0.1}>
+          <p className="font-cormorant text-lg text-maroon-950 sm:text-2xl">{content.invocation.ganapathi}</p>
         </ScrollReveal>
 
         <ScrollReveal className="mt-6 sm:mt-8" delay={0.1} amount={0.1}>

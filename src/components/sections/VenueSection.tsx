@@ -15,7 +15,7 @@ export const VenueSection: React.FC = () => {
   const currentVenue = isBlr ? content.mainVenue : content.hiremagaluruVenue;
 
   const steps = isBlr
-    ? ['Mysore Road', 'Ullal Main Road', '8th Cross, Gnanajyothinagar']
+    ? ['Mysore Road', 'Ullal Main Road', '8th Cross, Jnana Jyothi Nagar']
     : ['Chikkamagaluru', 'Hiremagaluru', 'Near the Kodandarama Temple'];
 
   const note = isBlr
@@ -30,16 +30,7 @@ export const VenueSection: React.FC = () => {
         <GoldDivider variant="simple" className="my-4 max-w-xs" />
       </ScrollReveal>
 
-      <ScrollReveal className="max-w-xl mx-auto mt-6 sm:mt-8" delay={0.05}>
-        <div className="px-5 py-5 sm:px-8 sm:py-6 text-center bg-[#FDFBF8]/90 shadow-[0_18px_40px_-30px_rgba(61,18,18,0.35)]">
-          <p className="font-cormorant text-lg sm:text-xl leading-relaxed text-maroon-900">
-            {content.forTheDay.seating}
-          </p>
-          <p className="mt-2 font-cormorant italic text-base sm:text-lg text-maroon-800/80">
-            {content.forTheDay.attire}
-          </p>
-        </div>
-      </ScrollReveal>
+      
 
       <ScrollReveal className="flex justify-center mt-6 sm:mt-8 mb-8 sm:mb-10" delay={0.08}>
         <div className="inline-flex w-full max-w-xs p-1 bg-[#FDFBF8] shadow-sm">

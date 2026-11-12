@@ -8,8 +8,8 @@ export const weddingEvents: WeddingEvent[] = [
     date: 'Saturday, 12th December 2026',
     time: '7:30 PM onwards',
     venueName: 'Smt. Chikkamma Ramaiah Kalyana Mantapa',
-    venueAddress: '8th Cross, Ullal Main Road, Gnanajyothinagar, Bengaluru - 56',
-    mapUrl: 'https://maps.google.com/?q=Smt.+Chikkamma+Ramaiah+Kalyana+Mantapa+Gnanajyothinagar+Bengaluru',
+    venueAddress: '8th Cross, Ullal Main Road, Jnana Jyothi Nagar, Bengaluru - 56',
+    mapUrl: 'https://maps.google.com/?q=Smt.+Chikkamma+Ramaiah+Kalyana+Mantapa+Jnana Jyothi Nagar+Bengaluru',
     startDateISO: '2026-12-12T19:30:00+05:30',
     endDateISO: '2026-12-12T22:30:00+05:30',
   },
@@ -21,8 +21,8 @@ export const weddingEvents: WeddingEvent[] = [
     time: '10:40 AM to 10:50 AM',
     lagna: 'Makara Lagna',
     venueName: 'Smt. Chikkamma Ramaiah Kalyana Mantapa',
-    venueAddress: '8th Cross, Ullal Main Road, Gnanajyothinagar, Bengaluru - 56',
-    mapUrl: 'https://maps.google.com/?q=Smt.+Chikkamma+Ramaiah+Kalyana+Mantapa+Gnanajyothinagar+Bengaluru',
+    venueAddress: '8th Cross, Ullal Main Road, Jnana Jyothi Nagar, Bengaluru - 56',
+    mapUrl: 'https://maps.google.com/?q=Smt.+Chikkamma+Ramaiah+Kalyana+Mantapa+Jnana Jyothi Nagar+Bengaluru',
     startDateISO: '2026-12-13T10:40:00+05:30',
     endDateISO: '2026-12-13T13:30:00+05:30',
   },
@@ -49,6 +49,10 @@ export const defaultWeddingPhotos: WeddingPhotos = {
 
   bridePortrait: '/images/web/bride.webp',
   bridePortraitDummy: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+
+  muhurthaMoment: '/images/web/muhurtha-knot.webp',
+  receptionBengaluru: '/images/web/reception-bengaluru.webp',
+  receptionHiremagaluru: '/images/web/reception-hiremagaluru.webp',
 
   gallery: [
     {
@@ -123,10 +127,10 @@ export const weddingContent: WeddingContent = {
   events: weddingEvents,
   mainVenue: {
     name: 'Smt. Chikkamma Ramaiah Kalyana Mantapa',
-    address: '8th Cross, Ullal Main Road, Gnanajyothinagar, Bengaluru - 56',
+    address: '8th Cross, Ullal Main Road, Jnana Jyothi Nagar, Bengaluru - 56',
     city: 'Bengaluru, Karnataka',
-    mapQuery: 'Smt. Chikkamma Ramaiah Kalyana Mantapa, Gnanajyothinagar, Bengaluru',
-    googleMapsUrl: 'https://maps.google.com/?q=Smt.+Chikkamma+Ramaiah+Kalyana+Mantapa+Gnanajyothinagar+Bengaluru',
+    mapQuery: 'Smt. Chikkamma Ramaiah Kalyana Mantapa, Jnana Jyothi Nagar, Bengaluru',
+    googleMapsUrl: 'https://maps.google.com/?q=Smt.+Chikkamma+Ramaiah+Kalyana+Mantapa+Jnana Jyothi Nagar+Bengaluru',
   },
   hiremagaluruVenue: {
     name: 'Hiremagaluru Sangha Kalyana Mantapa',
