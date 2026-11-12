@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { GoldDivider } from '../ornaments/GoldDivider';
@@ -13,51 +13,28 @@ type RevealDirection = 'up' | 'down' | 'left' | 'right' | 'none';
 const frameClass =
   'rounded-2xl p-[2px] bg-gradient-to-b from-[#F3E0A0] via-[#C59B27] to-[#8C6D18] shadow-[0_20px_38px_-24px_rgba(74,21,21,0.45)]';
 
-const MOBILE_AUTO_MS = 2000;
-const MOBILE_RESUME_AFTER_TOUCH_MS = 5000;
-
 function MobileEngagementStrip({
   frames,
-  lightboxOpen,
   onOpen,
 }: {
   frames: EngagementPhotoItem[];
-  lightboxOpen: boolean;
   onOpen: (url: string, caption: string) => void;
 }) {
   const reduceMotion = useReducedMotion();
   const scrollerRef = useRef<HTMLUListElement>(null);
   const slideRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const activeIndexRef = useRef(0);
-  const pausedRef = useRef(false);
-  const autoScrollingRef = useRef(false);
-  const resumeTimerRef = useRef<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const scheduleResume = useCallback(() => {
-    if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current);
-    pausedRef.current = true;
-    resumeTimerRef.current = window.setTimeout(() => {
-      pausedRef.current = false;
-      resumeTimerRef.current = null;
-    }, MOBILE_RESUME_AFTER_TOUCH_MS);
-  }, []);
-
   const scrollToIndex = useCallback(
-    (index: number, behavior?: ScrollBehavior) => {
+    (index: number) => {
       const el = slideRefs.current[index];
       if (!el) return;
-      autoScrollingRef.current = true;
       el.scrollIntoView({
-        behavior: behavior ?? (reduceMotion ? 'auto' : 'smooth'),
+        behavior: reduceMotion ? 'auto' : 'smooth',
         inline: 'center',
         block: 'nearest',
       });
-      activeIndexRef.current = index;
       setActiveIndex(index);
-      window.setTimeout(() => {
-        autoScrollingRef.current = false;
-      }, 700);
     },
     [reduceMotion],
   );
@@ -77,59 +54,15 @@ function MobileEngagementStrip({
         best = i;
       }
     });
-    activeIndexRef.current = best;
     setActiveIndex(best);
   }, []);
 
-  useEffect(() => {
-    const node = scrollerRef.current;
-    if (!node) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        pausedRef.current = !entry.isIntersecting;
-      },
-      { threshold: 0.3 },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (frames.length <= 1 || reduceMotion || lightboxOpen) return;
-
-    const tick = window.setInterval(() => {
-      if (pausedRef.current) return;
-      const next = (activeIndexRef.current + 1) % frames.length;
-      scrollToIndex(next);
-    }, MOBILE_AUTO_MS);
-
-    return () => window.clearInterval(tick);
-  }, [frames.length, reduceMotion, lightboxOpen, scrollToIndex]);
-
-  useEffect(
-    () => () => {
-      if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current);
-    },
-    [],
-  );
-
-  const onUserScroll = () => {
-    if (autoScrollingRef.current) return;
-    scheduleResume();
-    syncActiveFromScroll();
-  };
-
   return (
     <div className="-mx-1">
-      <p className="text-center font-cormorant italic text-sm text-maroon-800/65 mb-4">
-        {frames.length > 1 && !reduceMotion
-          ? 'Photos advance on their own — swipe anytime'
-          : 'Swipe to browse'}
-      </p>
+      <p className="text-center font-cormorant italic text-sm text-maroon-800/65 mb-4">Swipe to browse</p>
       <ul
         ref={scrollerRef}
-        onTouchStart={scheduleResume}
-        onScroll={onUserScroll}
+        onScroll={syncActiveFromScroll}
         className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-pl-4 pr-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         aria-label="Engagement photo gallery"
       >
@@ -139,13 +72,14 @@ function MobileEngagementStrip({
             ref={(node) => {
               slideRefs.current[index] = node;
             }}
-            className="w-[min(78vw,290px)] shrink-0 snap-center list-none"
+            className="w-[min(68vw,272px)] shrink-0 snap-center list-none"
           >
             <PhotoCard
               item={item}
               aspectClass="aspect-[4/5]"
-              revealDirection={index % 2 === 0 ? 'right' : 'left'}
-              revealDelay={index * 0.06}
+              enableScrollReveal={false}
+              enableParallax={false}
+              imageLoading={index < 2 ? 'eager' : 'lazy'}
               onOpen={onOpen}
             />
           </li>
@@ -164,10 +98,7 @@ function MobileEngagementStrip({
               role="tab"
               aria-selected={index === activeIndex}
               aria-label={`View photo ${index + 1}`}
-              onClick={() => {
-                scheduleResume();
-                scrollToIndex(index);
-              }}
+              onClick={() => scrollToIndex(index)}
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 index === activeIndex ? 'w-7 bg-gold-600' : 'w-1.5 bg-gold-600/35'
               }`}
@@ -186,6 +117,9 @@ function PhotoCard({
   revealDirection = 'up',
   revealDelay = 0,
   parallax = 12,
+  enableScrollReveal = true,
+  enableParallax = true,
+  imageLoading = 'lazy',
   onOpen,
 }: {
   item: EngagementPhotoItem;
@@ -194,37 +128,54 @@ function PhotoCard({
   revealDirection?: RevealDirection;
   revealDelay?: number;
   parallax?: number;
+  enableScrollReveal?: boolean;
+  enableParallax?: boolean;
+  imageLoading?: 'lazy' | 'eager';
   onOpen: (url: string, caption: string) => void;
 }) {
   const src = resolvePhoto(item.url, item.dummyUrl);
 
+  const imageButton = (
+    <button
+      type="button"
+      onClick={() => onOpen(src, item.title)}
+      className={`group relative block w-full border-0 p-0 text-left ${aspectClass} ${frameClass}`}
+      aria-label={item.title}
+    >
+      <span className="block h-full w-full overflow-hidden rounded-[14px] bg-[#EFE6D8]">
+        <img
+          src={src}
+          alt={item.title}
+          loading={imageLoading}
+          className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+        />
+      </span>
+    </button>
+  );
+
+  const body = (
+    <figure className={captionClass ?? 'text-center'}>
+      {enableParallax ? (
+        <ScrollParallaxPhoto intensity={parallax}>{imageButton}</ScrollParallaxPhoto>
+      ) : (
+        imageButton
+      )}
+      <figcaption className="mt-3 sm:mt-4">
+        <p className="font-serif text-base sm:text-lg text-maroon-950">{item.title}</p>
+        {item.date && (
+          <p className="mt-0.5 font-cormorant italic text-sm text-maroon-800/75">{item.date}</p>
+        )}
+      </figcaption>
+    </figure>
+  );
+
+  if (!enableScrollReveal) {
+    return <div className="h-full">{body}</div>;
+  }
+
   return (
     <ScrollReveal direction={revealDirection} delay={revealDelay} className="h-full">
-      <figure className={captionClass ?? 'text-center'}>
-        <ScrollParallaxPhoto intensity={parallax}>
-          <button
-            type="button"
-            onClick={() => onOpen(src, item.title)}
-            className={`group relative block w-full border-0 p-0 text-left ${aspectClass} ${frameClass}`}
-            aria-label={item.title}
-          >
-            <span className="block h-full w-full overflow-hidden rounded-[14px] bg-[#EFE6D8]">
-              <img
-                src={src}
-                alt={item.title}
-                loading="lazy"
-                className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
-              />
-            </span>
-          </button>
-        </ScrollParallaxPhoto>
-        <figcaption className="mt-3 sm:mt-4">
-          <p className="font-serif text-base sm:text-lg text-maroon-950">{item.title}</p>
-          {item.date && (
-            <p className="mt-0.5 font-cormorant italic text-sm text-maroon-800/75">{item.date}</p>
-          )}
-        </figcaption>
-      </figure>
+      {body}
     </ScrollReveal>
   );
 }
@@ -256,11 +207,7 @@ export const EngagementGallery: React.FC = () => {
       {frames.length > 0 && (
         <>
           <div className="sm:hidden">
-            <MobileEngagementStrip
-              frames={frames}
-              lightboxOpen={Boolean(galleryLightbox.image)}
-              onOpen={openGalleryLightbox}
-            />
+            <MobileEngagementStrip frames={frames} onOpen={openGalleryLightbox} />
           </div>
 
           {/* Tablet & desktop: featured + grid */}

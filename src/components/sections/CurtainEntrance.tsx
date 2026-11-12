@@ -90,6 +90,24 @@ export const CurtainEntrance: React.FC = () => {
                   {content.display.monthYear}
                 </span>
               </motion.button>
+              {!reduceMotion && (
+                <motion.span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-1/2 top-1/2 z-10 h-[250vmax] w-[250vmax] rounded-full"
+                  style={{
+                    x: '-50%',
+                    y: '-50%',
+                    background:
+                      'radial-gradient(circle closest-side, rgba(255,253,245,1) 0%, rgba(255,246,220,0.95) 22%, rgba(243,224,160,0.6) 45%, rgba(243,224,160,0) 100%)',
+                  }}
+                  initial={{ opacity: 0, scale: 0.05 }}
+                  exit={{
+                    opacity: [0, 1, 1, 0],
+                    scale: [0.05, 0.9, 1.1, 1.2],
+                    transition: { duration: 3, times: [0, 0.2, 0.4, 1], ease: 'easeOut' },
+                  }}
+                />
+              )}
             </div>
 
             <motion.p
